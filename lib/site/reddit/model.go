@@ -21,7 +21,7 @@ type Children struct {
 		Body       string `json:"body"`
 		Depth      int    `json:"depth"`
 		Author     string `json:"author"`
-		CreatedUTC int    `json:"created_utc"`
+		CreatedUTC int64  `json:"created_utc"`
 		Ups        int    `json:"ups"`
 		Downs      int    `json:"downs"`
 
@@ -31,7 +31,7 @@ type Children struct {
 }
 
 func (from Children) toModel() (model.Post, error) {
-	createdAt := time.Unix(int64(from.Data.CreatedUTC), 0)
+	createdAt := time.Unix(from.Data.CreatedUTC, 0)
 
 	return model.Post{
 		ID:    from.Data.ID,

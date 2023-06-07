@@ -60,9 +60,7 @@ func (a *App) RunApp() {
 	posts, err := a.Site.Fetch(a.SiteInput)
 	if err != nil {
 		a.Fatal(err.Error())
-	}
-
-	if len(posts) == 0 {
+	} else if len(posts) == 0 {
 		a.Fatal("No comments available")
 	}
 

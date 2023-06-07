@@ -78,14 +78,16 @@ func (s Disqus) getFromApi(apiKey string, threadID string) (model.Posts, error) 
 	cursor := "1%3A0%3A0"
 
 	var resp ListPostsThreaded
-	helper.GetPageToJSON(fmt.Sprintf(
+	if err := helper.GetPageToJSON(fmt.Sprintf(
 		"https://disqus.com/api/3.0/threads/listPostsThreaded?limit=%d&thread=%s&order=%s&cursor=%s&api_key=%s",
 		limit,
 		threadID,
 		order,
 		cursor,
 		apiKey,
-	), &resp)
+	), &resp); err != nil {
+		return nil, err
+	}
 
 	return resp.toModel()
 }

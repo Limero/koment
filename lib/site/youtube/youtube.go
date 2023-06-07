@@ -37,12 +37,14 @@ func (s Youtube) Fetch(fi model.SiteInput) (model.Posts, error) {
 
 func (s Youtube) getFromApi(videoID string, continueFrom string) (model.Posts, error) {
 	var resp CommentsResponse
-	helper.GetPageToJSON(fmt.Sprintf(
+	if err := helper.GetPageToJSON(fmt.Sprintf(
 		"%s/api/v1/comments/%s/?continuation=%s",
 		s.invidiousInstance,
 		videoID,
 		continueFrom,
-	), &resp)
+	), &resp); err != nil {
+		return nil, err
+	}
 
 	depth := 0
 	if continueFrom != "" {

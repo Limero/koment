@@ -22,7 +22,7 @@ type Comment struct {
 	ContentHTML          string `json:"contentHtml"`
 	IsPinned             bool   `json:"isPinned"`
 	IsSponsor            bool   `json:"isSponsor"`
-	Published            int    `json:"published"`
+	Published            int64  `json:"published"`
 	PublishedText        string `json:"publishedText"`
 	LikeCount            int    `json:"likeCount"`
 	CommentID            string `json:"commentId"`
@@ -45,7 +45,7 @@ type CommentsResponse struct {
 }
 
 func (from Comment) toModel(depth int) (model.Post, error) {
-	createdAt := time.Unix(int64(from.Published), 0)
+	createdAt := time.Unix(from.Published, 0)
 
 	return model.Post{
 		ID:    from.CommentID,

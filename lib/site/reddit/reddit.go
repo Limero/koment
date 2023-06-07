@@ -37,11 +37,13 @@ func (s Reddit) Fetch(fi model.SiteInput) (model.Posts, error) {
 
 func (s Reddit) getFromApi(subReddit string, threadID string) (model.Posts, error) {
 	var resp Listings
-	helper.GetPageToJSON(fmt.Sprintf(
+	if err := helper.GetPageToJSON(fmt.Sprintf(
 		"https://reddit.com/r/%s/comments/%s.json",
 		subReddit,
 		threadID,
-	), &resp)
+	), &resp); err != nil {
+		return nil, err
+	}
 
 	if len(resp) == 0 {
 		return nil, fmt.Errorf("no posts found, probably rate limited")
