@@ -5,15 +5,17 @@ import "net/url"
 type SiteName string
 
 const (
-	SiteDisqus  SiteName = "disqus"
-	SiteReddit  SiteName = "reddit"
-	SiteYoutube SiteName = "youtube"
+	SiteDisqus      SiteName = "disqus"
+	SiteReddit      SiteName = "reddit"
+	SiteYcombinator SiteName = "ycombinator" // Hacker News
+	SiteYoutube     SiteName = "youtube"
 )
 
 func AllSites() []SiteName {
 	return []SiteName{
 		SiteDisqus,
 		SiteReddit,
+		SiteYcombinator,
 		SiteYoutube,
 	}
 }
