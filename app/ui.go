@@ -9,6 +9,12 @@ import (
 	"github.com/limero/koment/lib/model"
 )
 
+func drawLoading(style Style, view *views.ViewPort, msg string) {
+	for x, c := range []rune(msg) {
+		view.SetContent(x, 0, c, nil, style.LoadingMessage)
+	}
+}
+
 func drawAuthorLine(style Style, view *views.ViewPort, post model.Post, x int, y int) int {
 	view.SetContent(x, y, style.AuthorStartChar, nil, style.AuthorStart)
 	x++

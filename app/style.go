@@ -37,8 +37,9 @@ type Style struct {
 	Command tcell.Style
 
 	// Info message
-	InfoMessage  tcell.Style
-	ErrorMessage tcell.Style
+	LoadingMessage tcell.Style
+	InfoMessage    tcell.Style
+	ErrorMessage   tcell.Style
 }
 
 func DefaultStyle() Style {
@@ -71,7 +72,8 @@ func DefaultStyle() Style {
 
 		Command: d,
 
-		InfoMessage:  d,
-		ErrorMessage: d.Background(tcell.ColorRed),
+		LoadingMessage: d,
+		InfoMessage:    d,
+		ErrorMessage:   d.Background(tcell.ColorRed),
 	}
 }

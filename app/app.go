@@ -54,6 +54,9 @@ func (a *App) RunApp() {
 	a.screen.Clear()
 	view := views.NewViewPort(a.screen, 0, 0, -1, -1)
 
+	drawLoading(a.Style, view, fmt.Sprintf("Loading comments from %s...", a.SiteInput.SiteName))
+	a.screen.Sync()
+
 	a.SiteInput.Demo = a.Demo
 	a.Site = lib.NewSite(a.SiteInput.SiteName)
 
