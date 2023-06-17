@@ -25,6 +25,7 @@ type App struct {
 	infoMsg      string
 	infoLevel    string
 	run          bool
+	loading      bool
 }
 
 func NewApp() App {
@@ -54,20 +55,22 @@ func (a *App) RunApp() {
 	a.screen.Clear()
 	view := views.NewViewPort(a.screen, 0, 0, -1, -1)
 
-	drawLoading(a.Style, view, fmt.Sprintf("Loading comments from %s...", a.SiteInput.SiteName))
-	a.screen.Sync()
-
 	a.SiteInput.Demo = a.Demo
 	a.Site = lib.NewSite(a.SiteInput.SiteName)
 
-	posts, err := a.Site.Fetch(a.SiteInput)
-	if err != nil {
-		a.Fatal(err.Error())
-	} else if len(posts) == 0 {
-		a.Fatal("No comments available")
-	}
+	go func() {
+		a.loading = true
+		posts, err := a.Site.Fetch(a.SiteInput)
+		if err != nil {
+			a.Fatal(err.Error())
+		} else if len(posts) == 0 {
+			a.Fatal("No comments available")
+		}
 
-	a.threads = model.PostsToThreads(posts)
+		a.threads = model.PostsToThreads(posts)
+		a.loading = false
+		a.screen.PostEvent(tcell.NewEventInterrupt(nil))
+	}()
 
 	shouldCenter := false
 	for a.run {
@@ -99,6 +102,11 @@ func (a *App) RunApp() {
 				panic(a.infoMsg)
 			}
 			a.infoMsg = ""
+		}
+
+		if a.loading {
+			drawLoading(a.Style, view, fmt.Sprintf("Loading comments from %s...", a.SiteInput.SiteName))
+			a.screen.Sync()
 		}
 
 		switch a.mode {
