@@ -2,6 +2,8 @@ package reddit
 
 import (
 	"encoding/json"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/limero/koment/lib/model"
@@ -17,13 +19,14 @@ type Listing struct {
 
 type Children struct {
 	Data struct {
-		ID         string `json:"id"`
-		Body       string `json:"body"`
-		Depth      int    `json:"depth"`
-		Author     string `json:"author"`
-		CreatedUTC int64  `json:"created_utc"`
-		Ups        int    `json:"ups"`
-		Downs      int    `json:"downs"`
+		ID     string `json:"id"`
+		Body   string `json:"body"`
+		Depth  int    `json:"depth"`
+		Author string `json:"author"`
+		// created might have one decimal 0, so can't use int64 directly
+		CreatedUTC json.Number `json:"created_utc"`
+		Ups        int         `json:"ups"`
+		Downs      int         `json:"downs"`
 
 		// replies is sometimes an object and sometimes an empty string
 		RepliesRaw json.RawMessage `json:"replies"`
@@ -31,7 +34,10 @@ type Children struct {
 }
 
 func (from Children) toModel() (model.Post, error) {
-	createdAt := time.Unix(from.Data.CreatedUTC, 0)
+	createdAt, err := from.getCreatedAt()
+	if err != nil {
+		return model.Post{}, err
+	}
 
 	return model.Post{
 		ID:    from.Data.ID,
@@ -45,6 +51,15 @@ func (from Children) toModel() (model.Post, error) {
 		Downvotes: &from.Data.Downs,
 		CreatedAt: &createdAt,
 	}, nil
+}
+
+func (from Children) getCreatedAt() (time.Time, error) {
+	createdAtString, _ := strings.CutSuffix(string(from.Data.CreatedUTC), ".0")
+	createdAtInt, err := strconv.ParseInt(createdAtString, 10, 64)
+	if err != nil {
+		return time.Time{}, err
+	}
+	return time.Unix(createdAtInt, 0), nil
 }
 
 func (from Listings) toModel() (model.Posts, error) {
