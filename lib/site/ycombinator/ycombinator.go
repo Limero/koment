@@ -29,7 +29,11 @@ func (s Ycombinator) Fetch(fi model.SiteInput) (model.Posts, error) {
 	if fi.Demo {
 		return s.getFromExampleFile()
 	}
-	return s.getFromApi(fi.ID)
+	id := fi.ID
+	if fi.ContinueFrom != "" {
+		id = fi.ContinueFrom
+	}
+	return s.getFromApi(id)
 }
 
 func (s Ycombinator) getFromApi(id string) (model.Posts, error) {
@@ -43,14 +47,15 @@ func (s Ycombinator) getFromApi(id string) (model.Posts, error) {
 	switch resp.Type {
 	case "story":
 		for _, kid := range resp.Kids {
-			if err := helper.GetPageToJSON(fmt.Sprintf(url, strconv.Itoa(kid)), &resp); err != nil {
+			var newResp Post
+			if err := helper.GetPageToJSON(fmt.Sprintf(url, strconv.Itoa(kid)), &newResp); err != nil {
 				return nil, err
 			}
 
-			posts = append(posts, resp)
+			posts = append(posts, newResp)
 		}
 	case "comment":
-		// TODO: Support fetching replies to posts
+		posts = append(posts, resp)
 	}
 
 	return posts.toModel()

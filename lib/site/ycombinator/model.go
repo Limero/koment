@@ -4,6 +4,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/limero/koment/lib/model"
 )
 
@@ -40,13 +41,25 @@ func (from Post) toModel() (model.Post, error) {
 }
 
 func (from Posts) toModel() (model.Posts, error) {
-	posts := make(model.Posts, len(from))
-	for i, p := range from {
+	posts := make(model.Posts, 0)
+	for _, p := range from {
 		post, err := p.toModel()
 		if err != nil {
 			return nil, err
 		}
-		posts[i] = post
+		posts = append(posts, post)
+
+		if len(p.Kids) > 0 {
+			for _, kid := range p.Kids {
+				posts = append(posts, model.Post{
+					ID: uuid.NewString(),
+					Stub: &model.Stub{
+						Count: 1,
+						Key:   strconv.Itoa(kid),
+					},
+				})
+			}
+		}
 	}
 	return posts, nil
 }

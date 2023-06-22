@@ -13,6 +13,7 @@ func TestToModel(t *testing.T) {
 		{
 			By:    "author",
 			ID:    1,
+			Kids:  []int{2, 3},
 			Text:  "body",
 			Score: 123,
 			Time:  1680813139,
@@ -22,7 +23,7 @@ func TestToModel(t *testing.T) {
 	depth := 0
 	posts, err := listPosts.toModel()
 	require.NoError(t, err)
-	assert.Len(t, posts, 1)
+	assert.Len(t, posts, 3)
 
 	t.Run("Check post", func(t *testing.T) {
 		expected := listPosts[0]
@@ -34,5 +35,20 @@ func TestToModel(t *testing.T) {
 		assert.Equal(t, expected.Time, actual.CreatedAt.Unix())
 		assert.Equal(t, expected.Score, *actual.Upvotes)
 		assert.Nil(t, actual.Downvotes)
+	})
+
+	t.Run("Check replies stubs", func(t *testing.T) {
+		expected := listPosts[0]
+		actual := posts[1]
+		require.NotNil(t, actual.Stub)
+		assert.Len(t, actual.ID, 36) // generated uuid
+		assert.Equal(t, 1, actual.Stub.Count)
+		assert.Equal(t, strconv.Itoa(expected.Kids[0]), actual.Stub.Key)
+
+		actual = posts[2]
+		require.NotNil(t, actual.Stub)
+		assert.Len(t, actual.ID, 36) // generated uuid
+		assert.Equal(t, 1, actual.Stub.Count)
+		assert.Equal(t, strconv.Itoa(expected.Kids[1]), actual.Stub.Key)
 	})
 }
