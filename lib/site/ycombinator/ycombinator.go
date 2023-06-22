@@ -58,7 +58,7 @@ func (s Ycombinator) getFromApi(id string) (model.Posts, error) {
 		posts = append(posts, resp)
 	}
 
-	return posts.toModel()
+	return posts.toModel(0)
 }
 
 func (s Ycombinator) getFromExampleFile() (model.Posts, error) {
@@ -72,7 +72,7 @@ func (s Ycombinator) getFromExampleFile() (model.Posts, error) {
 		return nil, err
 	}
 
-	post, err := resp.toModel()
+	post, err := resp.toModel(0)
 	if err != nil {
 		return nil, err
 	}

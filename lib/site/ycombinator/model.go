@@ -24,12 +24,12 @@ type Post struct {
 	URL         string `json:"url"`
 }
 
-func (from Post) toModel() (model.Post, error) {
+func (from Post) toModel(depth int) (model.Post, error) {
 	createdAt := time.Unix(from.Time, 0)
 
 	return model.Post{
 		ID:    strconv.Itoa(from.ID),
-		Depth: 0, // TODO
+		Depth: depth,
 		Author: model.Author{
 			Name: from.By,
 		},
@@ -40,10 +40,10 @@ func (from Post) toModel() (model.Post, error) {
 	}, nil
 }
 
-func (from Posts) toModel() (model.Posts, error) {
+func (from Posts) toModel(depth int) (model.Posts, error) {
 	posts := make(model.Posts, 0)
 	for _, p := range from {
-		post, err := p.toModel()
+		post, err := p.toModel(depth)
 		if err != nil {
 			return nil, err
 		}

@@ -21,7 +21,7 @@ func TestToModel(t *testing.T) {
 	}
 
 	depth := 0
-	posts, err := listPosts.toModel()
+	posts, err := listPosts.toModel(depth)
 	require.NoError(t, err)
 	assert.Len(t, posts, 3)
 
