@@ -32,33 +32,39 @@ func (a *App) ViewerMode() {
 }
 
 func (a *App) ContinueStub() {
-	activePost := a.threads[a.activeThread].Posts[a.activePost]
 	if a.Demo {
 		a.Error("Fetching replies does not work in demo")
-	} else if activePost.Stub.Key == "" {
-		a.Error("No more replies can be fetched on this thread")
-	} else {
-		a.SiteInput.ContinueFrom = &model.ContinueFrom{
-			Key:   activePost.Stub.Key,
-			Depth: activePost.Depth,
-		}
-		posts, err := a.Site.Fetch(a.SiteInput)
-		if err != nil {
-			a.Error(err.Error())
-			return
-		}
-		a.threads[a.activeThread].Posts = a.threads[a.activeThread].Posts[:len(a.threads[a.activeThread].Posts)-1]
-		a.threads[a.activeThread].Posts = append(a.threads[a.activeThread].Posts, posts...)
+		return
+	}
 
-		if len(posts) < activePost.Stub.Count {
-			a.threads[a.activeThread].Posts = append(a.threads[a.activeThread].Posts, model.Post{
-				ID:    uuid.NewString(),
-				Depth: activePost.Depth,
-				Stub: &model.Stub{
-					Count: activePost.Stub.Count - len(posts),
-					Key:   "", // TODO
-				},
-			})
-		}
+	activePost := a.threads[a.activeThread].Posts[a.activePost]
+	if activePost.Stub.Key == "" {
+		a.Error("No more replies can be fetched on this thread")
+		return
+	}
+
+	a.SiteInput.ContinueFrom = &model.ContinueFrom{
+		Key:   activePost.Stub.Key,
+		Depth: activePost.Depth,
+	}
+	posts, err := a.Site.Fetch(a.SiteInput)
+	if err != nil {
+		a.Error(err.Error())
+		return
+	}
+	// TODO: delete specific stub, instead of last index
+	a.threads[a.activeThread].Posts = a.threads[a.activeThread].Posts[:len(a.threads[a.activeThread].Posts)-1]
+	// TODO: append at removed stub, instead of last index
+	a.threads[a.activeThread].Posts = append(a.threads[a.activeThread].Posts, posts...)
+
+	if len(posts) < activePost.Stub.Count {
+		a.threads[a.activeThread].Posts = append(a.threads[a.activeThread].Posts, model.Post{
+			ID:    uuid.NewString(),
+			Depth: activePost.Depth,
+			Stub: &model.Stub{
+				Count: activePost.Stub.Count - len(posts),
+				Key:   "", // TODO
+			},
+		})
 	}
 }
