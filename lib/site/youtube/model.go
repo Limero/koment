@@ -31,10 +31,12 @@ type Comment struct {
 		CreatorThumbnail string `json:"creatorThumbnail"`
 		CreatorName      string `json:"creatorName"`
 	} `json:"creatorHeart,omitempty"`
-	Replies struct {
-		ReplyCount   int    `json:"replyCount"`
-		Continuation string `json:"continuation"`
-	} `json:"replies,omitempty"`
+	Replies Replies `json:"replies,omitempty"`
+}
+
+type Replies struct {
+	ReplyCount   int    `json:"replyCount"`
+	Continuation string `json:"continuation"`
 }
 
 type CommentsResponse struct {
