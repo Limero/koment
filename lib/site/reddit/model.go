@@ -12,25 +12,29 @@ import (
 type Listings []Listing
 
 type Listing struct {
-	Data struct {
-		Children []Children `json:"children"`
-	} `json:"data"`
+	Data ListingData `json:"data"`
+}
+
+type ListingData struct {
+	Children []Children `json:"children"`
 }
 
 type Children struct {
-	Data struct {
-		ID     string `json:"id"`
-		Body   string `json:"body"`
-		Depth  int    `json:"depth"`
-		Author string `json:"author"`
-		// created might have one decimal 0, so can't use int64 directly
-		CreatedUTC json.Number `json:"created_utc"`
-		Ups        int         `json:"ups"`
-		Downs      int         `json:"downs"`
+	Data ChildrenData `json:"data"`
+}
 
-		// replies is sometimes an object and sometimes an empty string
-		RepliesRaw json.RawMessage `json:"replies"`
-	} `json:"data"`
+type ChildrenData struct {
+	ID     string `json:"id"`
+	Body   string `json:"body"`
+	Depth  int    `json:"depth"`
+	Author string `json:"author"`
+	// created might have one decimal 0, so can't use int64 directly
+	CreatedUTC json.Number `json:"created_utc"`
+	Ups        int         `json:"ups"`
+	Downs      int         `json:"downs"`
+
+	// replies is sometimes an object and sometimes an empty string
+	RepliesRaw json.RawMessage `json:"replies"`
 }
 
 func (from Children) toModel() (model.Post, error) {
