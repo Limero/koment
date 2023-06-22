@@ -74,7 +74,8 @@ func (from CommentsResponse) toModel(depth int) (model.Posts, error) {
 
 		if p.Replies.ReplyCount > 0 {
 			posts = append(posts, model.Post{
-				ID: uuid.NewString(),
+				ID:    uuid.NewString(),
+				Depth: depth + 1,
 				Stub: &model.Stub{
 					Count: p.Replies.ReplyCount,
 					Key:   p.Replies.Continuation,

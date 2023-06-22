@@ -42,12 +42,14 @@ func TestToModel(t *testing.T) {
 		actual := posts[1]
 		require.NotNil(t, actual.Stub)
 		assert.Len(t, actual.ID, 36) // generated uuid
+		assert.Equal(t, depth+1, actual.Depth)
 		assert.Equal(t, 1, actual.Stub.Count)
 		assert.Equal(t, strconv.Itoa(expected.Kids[0]), actual.Stub.Key)
 
 		actual = posts[2]
 		require.NotNil(t, actual.Stub)
 		assert.Len(t, actual.ID, 36) // generated uuid
+		assert.Equal(t, depth+1, actual.Depth)
 		assert.Equal(t, 1, actual.Stub.Count)
 		assert.Equal(t, strconv.Itoa(expected.Kids[1]), actual.Stub.Key)
 	})

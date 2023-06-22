@@ -38,7 +38,12 @@ type SiteInput struct {
 	SiteName     SiteName
 	ID           string
 	Category     string
-	ContinueFrom string
+	ContinueFrom *ContinueFrom
 	Demo         bool
 	ApiKey       string
+}
+
+type ContinueFrom struct {
+	Key   string
+	Depth int
 }

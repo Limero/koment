@@ -38,7 +38,10 @@ func (a *App) ContinueStub() {
 	} else if activePost.Stub.Key == "" {
 		a.Error("No more replies can be fetched on this thread")
 	} else {
-		a.SiteInput.ContinueFrom = activePost.Stub.Key
+		a.SiteInput.ContinueFrom = &model.ContinueFrom{
+			Key:   activePost.Stub.Key,
+			Depth: activePost.Depth,
+		}
 		posts, err := a.Site.Fetch(a.SiteInput)
 		if err != nil {
 			a.Error(err.Error())
@@ -49,7 +52,8 @@ func (a *App) ContinueStub() {
 
 		if len(posts) < activePost.Stub.Count {
 			a.threads[a.activeThread].Posts = append(a.threads[a.activeThread].Posts, model.Post{
-				ID: uuid.NewString(),
+				ID:    uuid.NewString(),
+				Depth: activePost.Depth,
 				Stub: &model.Stub{
 					Count: activePost.Stub.Count - len(posts),
 					Key:   "", // TODO

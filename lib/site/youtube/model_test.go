@@ -46,6 +46,7 @@ func TestToModel(t *testing.T) {
 		actual := posts[1]
 		require.NotNil(t, actual.Stub)
 		assert.Len(t, actual.ID, 36) // generated uuid
+		assert.Equal(t, depth+1, actual.Depth)
 		assert.Equal(t, expected.Replies.ReplyCount, actual.Stub.Count)
 		assert.Equal(t, expected.Replies.Continuation, actual.Stub.Key)
 	})

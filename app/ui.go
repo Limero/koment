@@ -59,8 +59,6 @@ func drawAuthorLine(style Style, view *views.ViewPort, post model.Post, x int, y
 }
 
 func drawStub(style Style, view *views.ViewPort, post model.Post, activePostID string, x int, y int) {
-	y--
-	x = (post.Depth + 1) * style.FullIndent
 	st := style.StubMessage
 	if post.ID == activePostID {
 		x++
@@ -81,16 +79,17 @@ func drawViewer(style Style, view *views.ViewPort, threads model.Threads, active
 
 	for _, thread := range threads {
 		for _, post := range thread.Posts {
+			x = post.Depth * style.FullIndent
+
 			if post.Stub != nil {
+				drawStub(style, view, post, activePostID, x, y)
 				if post.ID == activePostID {
 					activeMsgY = y
 					activeMsgLength = 1
 				}
-				drawStub(style, view, post, activePostID, x, y)
+				y++
 				continue
 			}
-
-			x = post.Depth * style.FullIndent
 
 			// Author line
 			x = drawAuthorLine(style, view, post, x, y)

@@ -52,7 +52,8 @@ func (from Posts) toModel(depth int) (model.Posts, error) {
 		if len(p.Kids) > 0 {
 			for _, kid := range p.Kids {
 				posts = append(posts, model.Post{
-					ID: uuid.NewString(),
+					ID:    uuid.NewString(),
+					Depth: depth + 1,
 					Stub: &model.Stub{
 						Count: 1,
 						Key:   strconv.Itoa(kid),

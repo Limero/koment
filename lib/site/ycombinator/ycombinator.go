@@ -29,14 +29,16 @@ func (s Ycombinator) Fetch(fi model.SiteInput) (model.Posts, error) {
 	if fi.Demo {
 		return s.getFromExampleFile()
 	}
-	id := fi.ID
-	if fi.ContinueFrom != "" {
-		id = fi.ContinueFrom
-	}
-	return s.getFromApi(id)
+	return s.getFromApi(fi.ID, fi.ContinueFrom)
 }
 
-func (s Ycombinator) getFromApi(id string) (model.Posts, error) {
+func (s Ycombinator) getFromApi(id string, continueFrom *model.ContinueFrom) (model.Posts, error) {
+	depth := 0
+	if continueFrom != nil {
+		id = continueFrom.Key
+		depth = continueFrom.Depth
+	}
+
 	url := "https://hacker-news.firebaseio.com/v0/item/%s.json"
 	var resp Post
 	if err := helper.GetPageToJSON(fmt.Sprintf(url, id), &resp); err != nil {
@@ -58,7 +60,7 @@ func (s Ycombinator) getFromApi(id string) (model.Posts, error) {
 		posts = append(posts, resp)
 	}
 
-	return posts.toModel(0)
+	return posts.toModel(depth)
 }
 
 func (s Ycombinator) getFromExampleFile() (model.Posts, error) {

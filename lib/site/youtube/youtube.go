@@ -35,20 +35,22 @@ func (s Youtube) Fetch(fi model.SiteInput) (model.Posts, error) {
 	return s.getFromApi(fi.ID, fi.ContinueFrom)
 }
 
-func (s Youtube) getFromApi(videoID string, continueFrom string) (model.Posts, error) {
+func (s Youtube) getFromApi(videoID string, continueFrom *model.ContinueFrom) (model.Posts, error) {
+	continueFromKey := ""
+	depth := 0
+	if continueFrom != nil {
+		continueFromKey = continueFrom.Key
+		depth = continueFrom.Depth
+	}
+
 	var resp CommentsResponse
 	if err := helper.GetPageToJSON(fmt.Sprintf(
 		"%s/api/v1/comments/%s/?continuation=%s",
 		s.invidiousInstance,
 		videoID,
-		continueFrom,
+		continueFromKey,
 	), &resp); err != nil {
 		return nil, err
-	}
-
-	depth := 0
-	if continueFrom != "" {
-		depth = 1
 	}
 
 	return resp.toModel(depth)
