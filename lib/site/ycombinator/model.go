@@ -7,6 +7,8 @@ import (
 	"github.com/limero/koment/lib/model"
 )
 
+type Posts []Post
+
 type Post struct {
 	By          string `json:"by"`
 	Descendants int    `json:"descendants"`
@@ -35,4 +37,16 @@ func (from Post) toModel() (model.Post, error) {
 		Upvotes:   &from.Score,
 		CreatedAt: &createdAt,
 	}, nil
+}
+
+func (from Posts) toModel() (model.Posts, error) {
+	posts := make(model.Posts, len(from))
+	for i, p := range from {
+		post, err := p.toModel()
+		if err != nil {
+			return nil, err
+		}
+		posts[i] = post
+	}
+	return posts, nil
 }

@@ -39,8 +39,7 @@ func (s Ycombinator) getFromApi(id string) (model.Posts, error) {
 		return nil, err
 	}
 
-	var posts model.Posts
-
+	var posts Posts
 	switch resp.Type {
 	case "story":
 		for _, kid := range resp.Kids {
@@ -48,17 +47,13 @@ func (s Ycombinator) getFromApi(id string) (model.Posts, error) {
 				return nil, err
 			}
 
-			post, err := resp.toModel()
-			if err != nil {
-				return nil, err
-			}
-			posts = append(posts, post)
+			posts = append(posts, resp)
 		}
 	case "comment":
 		// TODO: Support fetching replies to posts
 	}
 
-	return posts, nil
+	return posts.toModel()
 }
 
 func (s Ycombinator) getFromExampleFile() (model.Posts, error) {
