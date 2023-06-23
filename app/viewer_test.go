@@ -77,6 +77,26 @@ func TestContinueStub(t *testing.T) {
 			},
 			expectedPosts: []string{"2", "3"},
 		},
+		{
+			name: "Continue stub with more posts remaining",
+			threads: model.Threads{
+				{
+					Posts: model.Posts{
+						{
+							ID: "1",
+							Stub: &model.Stub{
+								Count: 5,
+								Key:   "key",
+							},
+						},
+					},
+				},
+			},
+			siteFetch: &test.MockedCall[any, model.Posts]{
+				Return: model.Posts{{ID: "2"}, {ID: "3"}},
+			},
+			expectedPosts: []string{"2", "3", "stub"},
+		},
 	} {
 		t.Run(tt.name, func(t *testing.T) {
 			site := new(test.MockSite)
@@ -101,7 +121,14 @@ func TestContinueStub(t *testing.T) {
 				assert.Len(t, a.threads[a.activeThread].Posts, len(tt.expectedPosts))
 				for i, postID := range tt.expectedPosts {
 					// check if correct posts in the right order
-					assert.Equal(t, postID, a.threads[a.activeThread].Posts[i].ID)
+					actual := a.threads[a.activeThread].Posts[i]
+					if postID == "stub" {
+						assert.Len(t, actual.ID, 36) // generated uuid
+						assert.NotNil(t, actual.Stub)
+					} else {
+						assert.Equal(t, postID, actual.ID)
+						assert.Nil(t, actual.Stub)
+					}
 				}
 			}
 		})
