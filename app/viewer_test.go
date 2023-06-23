@@ -21,10 +21,11 @@ func TestContinueStub_demo(t *testing.T) {
 
 func TestContinueStub(t *testing.T) {
 	for _, tt := range []struct {
-		name        string
-		threads     model.Threads
-		siteFetch   *test.MockedCall[any, model.Posts]
-		expectedErr string
+		name          string
+		threads       model.Threads
+		siteFetch     *test.MockedCall[any, model.Posts]
+		expectedErr   string
+		expectedPosts []string
 	}{
 		{
 			name: "Error if empty stub key",
@@ -63,6 +64,7 @@ func TestContinueStub(t *testing.T) {
 				{
 					Posts: model.Posts{
 						{
+							ID: "1",
 							Stub: &model.Stub{
 								Key: "key",
 							},
@@ -71,8 +73,9 @@ func TestContinueStub(t *testing.T) {
 				},
 			},
 			siteFetch: &test.MockedCall[any, model.Posts]{
-				Return: model.Posts{{}, {}},
+				Return: model.Posts{{ID: "2"}, {ID: "3"}},
 			},
+			expectedPosts: []string{"2", "3"},
 		},
 	} {
 		t.Run(tt.name, func(t *testing.T) {
@@ -95,7 +98,11 @@ func TestContinueStub(t *testing.T) {
 				assert.Contains(t, a.infoMsg, tt.expectedErr)
 			} else {
 				// posts are added and stub is removed
-				assert.Len(t, tt.threads[0].Posts, len(tt.siteFetch.Return))
+				assert.Len(t, a.threads[a.activeThread].Posts, len(tt.expectedPosts))
+				for i, postID := range tt.expectedPosts {
+					// check if correct posts in the right order
+					assert.Equal(t, postID, a.threads[a.activeThread].Posts[i].ID)
+				}
 			}
 		})
 	}
