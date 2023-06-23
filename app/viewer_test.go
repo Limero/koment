@@ -4,6 +4,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/limero/koment/app/test"
 	"github.com/limero/koment/lib/model"
 	"github.com/stretchr/testify/assert"
@@ -64,7 +65,7 @@ func TestContinueStub(t *testing.T) {
 				{
 					Posts: model.Posts{
 						{
-							ID: "1",
+							ID: uuid.NewString(),
 							Stub: &model.Stub{
 								Key: "key",
 							},
@@ -73,9 +74,9 @@ func TestContinueStub(t *testing.T) {
 				},
 			},
 			siteFetch: &test.MockedCall[any, model.Posts]{
-				Return: model.Posts{{ID: "2"}, {ID: "3"}},
+				Return: model.Posts{{ID: "1"}, {ID: "2"}},
 			},
-			expectedPosts: []string{"2", "3"},
+			expectedPosts: []string{"1", "2"},
 		},
 		{
 			name: "Continue stub with more posts remaining",
@@ -83,7 +84,7 @@ func TestContinueStub(t *testing.T) {
 				{
 					Posts: model.Posts{
 						{
-							ID: "1",
+							ID: uuid.NewString(),
 							Stub: &model.Stub{
 								Count: 5,
 								Key:   "key",
@@ -93,9 +94,34 @@ func TestContinueStub(t *testing.T) {
 				},
 			},
 			siteFetch: &test.MockedCall[any, model.Posts]{
-				Return: model.Posts{{ID: "2"}, {ID: "3"}},
+				Return: model.Posts{{ID: "1"}, {ID: "2"}},
 			},
-			expectedPosts: []string{"2", "3", "stub"},
+			expectedPosts: []string{"1", "2", "stub"},
+		},
+		{
+			name: "Continue stub with additional stubs",
+			threads: model.Threads{
+				{
+					Posts: model.Posts{
+						{
+							ID: "abc", // not uuid for assert to confirm correct stub
+							Stub: &model.Stub{
+								Key: "key1",
+							},
+						},
+						{
+							ID: uuid.NewString(),
+							Stub: &model.Stub{
+								Key: "key2",
+							},
+						},
+					},
+				},
+			},
+			siteFetch: &test.MockedCall[any, model.Posts]{
+				Return: model.Posts{{ID: "1"}, {ID: "2"}},
+			},
+			expectedPosts: []string{"stub", "1", "2"}, // TODO: Change to 1,2,stub
 		},
 	} {
 		t.Run(tt.name, func(t *testing.T) {

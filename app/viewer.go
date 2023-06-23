@@ -52,8 +52,10 @@ func (a *App) ContinueStub() {
 		a.Error(err.Error())
 		return
 	}
-	// TODO: delete specific stub, instead of last index
-	a.threads[a.activeThread].Posts = a.threads[a.activeThread].Posts[:len(a.threads[a.activeThread].Posts)-1]
+
+	// remove stub
+	a.threads[a.activeThread].Posts = a.threads[a.activeThread].Posts.RemoveAt(a.activePost)
+
 	// TODO: append at removed stub, instead of last index
 	a.threads[a.activeThread].Posts = append(a.threads[a.activeThread].Posts, posts...)
 

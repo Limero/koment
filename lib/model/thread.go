@@ -3,7 +3,7 @@ package model
 import "strings"
 
 type Thread struct {
-	Posts []Post
+	Posts Posts
 }
 
 type Threads []Thread

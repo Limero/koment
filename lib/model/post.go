@@ -20,3 +20,10 @@ type Post struct {
 }
 
 type Posts []Post
+
+func (posts Posts) RemoveAt(index int) Posts {
+	if index >= 0 && index < len(posts) {
+		return append(posts[:index], posts[index+1:]...)
+	}
+	return posts
+}
