@@ -121,7 +121,7 @@ func TestContinueStub(t *testing.T) {
 			siteFetch: &test.MockedCall[any, model.Posts]{
 				Return: model.Posts{{ID: "1"}, {ID: "2"}},
 			},
-			expectedPosts: []string{"stub", "1", "2"}, // TODO: Change to 1,2,stub
+			expectedPosts: []string{"1", "2", "stub"},
 		},
 	} {
 		t.Run(tt.name, func(t *testing.T) {

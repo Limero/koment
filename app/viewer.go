@@ -53,11 +53,9 @@ func (a *App) ContinueStub() {
 		return
 	}
 
-	// remove stub
-	a.threads[a.activeThread].Posts = a.threads[a.activeThread].Posts.RemoveAt(a.activePost)
-
-	// TODO: append at removed stub, instead of last index
-	a.threads[a.activeThread].Posts = append(a.threads[a.activeThread].Posts, posts...)
+	a.threads[a.activeThread].Posts = a.threads[a.activeThread].Posts.
+		RemoveAt(a.activePost). // remove stub
+		AppendAt(posts, a.activePost)
 
 	if len(posts) < activePost.Stub.Count {
 		a.threads[a.activeThread].Posts = append(a.threads[a.activeThread].Posts, model.Post{
