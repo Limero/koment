@@ -7,6 +7,12 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
+type MockedCall[I, R any] struct {
+	Input  I
+	Return R
+	Error  error
+}
+
 type MockSite struct {
 	mock.Mock
 }
