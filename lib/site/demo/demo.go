@@ -30,7 +30,7 @@ func (s Demo) Fetch(fi model.SiteInput) (model.Posts, error) {
 		createdAt := fake.Time().TimeBetween(time.Now().AddDate(0, -1, 0), time.Now())
 		posts = append(posts, fakePost(fake, 0, createdAt))
 
-		for j := 0; i < fake.IntBetween(0, 5); j++ {
+		for j := 0; j < fake.IntBetween(0, 5); j++ {
 			createdAt = fake.Time().TimeBetween(createdAt, time.Now())
 			posts = append(posts, fakePost(fake, j+1, createdAt))
 		}
