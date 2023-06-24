@@ -5,6 +5,8 @@ import "net/url"
 type SiteName string
 
 const (
+	SiteDemo SiteName = "demo"
+
 	SiteDisqus      SiteName = "disqus"
 	SiteReddit      SiteName = "reddit"
 	SiteYcombinator SiteName = "ycombinator" // Hacker News
@@ -13,6 +15,7 @@ const (
 
 func AllSites() []SiteName {
 	return []SiteName{
+		SiteDemo,
 		SiteDisqus,
 		SiteReddit,
 		SiteYcombinator,
@@ -39,7 +42,6 @@ type SiteInput struct {
 	ID           string
 	Category     string
 	ContinueFrom *ContinueFrom
-	Demo         bool
 	ApiKey       string
 }
 

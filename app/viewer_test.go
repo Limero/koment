@@ -11,15 +11,6 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestContinueStub_demo(t *testing.T) {
-	a := App{
-		Demo: true,
-	}
-	a.ContinueStub()
-	assert.Equal(t, "error", a.infoLevel)
-	assert.Contains(t, a.infoMsg, "Fetching replies does not work in demo")
-}
-
 func TestContinueStub(t *testing.T) {
 	for _, tt := range []struct {
 		name          string

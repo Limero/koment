@@ -1,11 +1,9 @@
 package disqus
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/url"
-	"os"
 
 	"github.com/limero/koment/lib/helper"
 	"github.com/limero/koment/lib/model"
@@ -43,9 +41,6 @@ func (s Disqus) GetInput(url *url.URL, v ...string) (*model.SiteInput, error) {
 }
 
 func (s Disqus) Fetch(fi model.SiteInput) (model.Posts, error) {
-	if fi.Demo {
-		return s.getFromExampleFile()
-	}
 	return s.getFromApi(fi.ApiKey, fi.ID)
 }
 
@@ -86,20 +81,6 @@ func (s Disqus) getFromApi(apiKey string, threadID string) (model.Posts, error) 
 		cursor,
 		apiKey,
 	), &resp); err != nil {
-		return nil, err
-	}
-
-	return resp.toModel()
-}
-
-func (s Disqus) getFromExampleFile() (model.Posts, error) {
-	data, err := os.ReadFile("lib/demo/disqus-example-api.json")
-	if err != nil {
-		return nil, err
-	}
-
-	var resp ListPostsThreaded
-	if err := json.Unmarshal(data, &resp); err != nil {
 		return nil, err
 	}
 

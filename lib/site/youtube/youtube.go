@@ -1,10 +1,8 @@
 package youtube
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/url"
-	"os"
 
 	"github.com/limero/koment/lib/helper"
 	"github.com/limero/koment/lib/model"
@@ -29,9 +27,6 @@ func (s Youtube) GetInput(url *url.URL, _ ...string) (*model.SiteInput, error) {
 }
 
 func (s Youtube) Fetch(fi model.SiteInput) (model.Posts, error) {
-	if fi.Demo {
-		return s.getFromExampleFile()
-	}
 	return s.getFromApi(fi.ID, fi.ContinueFrom)
 }
 
@@ -54,18 +49,4 @@ func (s Youtube) getFromApi(videoID string, continueFrom *model.ContinueFrom) (m
 	}
 
 	return resp.toModel(depth)
-}
-
-func (s Youtube) getFromExampleFile() (model.Posts, error) {
-	data, err := os.ReadFile("lib/demo/youtube-example-api.json")
-	if err != nil {
-		return nil, err
-	}
-
-	var resp CommentsResponse
-	if err := json.Unmarshal(data, &resp); err != nil {
-		return nil, err
-	}
-
-	return resp.toModel(0)
 }

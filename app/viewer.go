@@ -32,11 +32,6 @@ func (a *App) ViewerMode() {
 }
 
 func (a *App) ContinueStub() {
-	if a.Demo {
-		a.Error("Fetching replies does not work in demo")
-		return
-	}
-
 	activePost := a.threads[a.activeThread].Posts[a.activePost]
 	if activePost.Stub.Key == "" {
 		a.Error("No more replies can be fetched on this thread")

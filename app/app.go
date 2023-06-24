@@ -13,7 +13,6 @@ type App struct {
 	Site      model.Site
 	SiteInput model.SiteInput
 	Style     Style
-	Demo      bool
 
 	screen       tcell.Screen
 	threads      model.Threads
@@ -55,7 +54,6 @@ func (a *App) RunApp() {
 	a.screen.Clear()
 	view := views.NewViewPort(a.screen, 0, 0, -1, -1)
 
-	a.SiteInput.Demo = a.Demo
 	a.Site = lib.NewSite(a.SiteInput.SiteName)
 
 	go func() {

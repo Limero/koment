@@ -1,10 +1,8 @@
 package ycombinator
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/url"
-	"os"
 	"strconv"
 
 	"github.com/limero/koment/lib/helper"
@@ -26,9 +24,6 @@ func (s Ycombinator) GetInput(url *url.URL, _ ...string) (*model.SiteInput, erro
 }
 
 func (s Ycombinator) Fetch(fi model.SiteInput) (model.Posts, error) {
-	if fi.Demo {
-		return s.getFromExampleFile()
-	}
 	return s.getFromApi(fi.ID, fi.ContinueFrom)
 }
 
@@ -61,23 +56,4 @@ func (s Ycombinator) getFromApi(id string, continueFrom *model.ContinueFrom) (mo
 	}
 
 	return posts.toModel(depth)
-}
-
-func (s Ycombinator) getFromExampleFile() (model.Posts, error) {
-	data, err := os.ReadFile("lib/demo/ycombinator-example-api.json")
-	if err != nil {
-		return nil, err
-	}
-
-	var resp Post
-	if err = json.Unmarshal(data, &resp); err != nil {
-		return nil, err
-	}
-
-	post, err := resp.toModel(0)
-	if err != nil {
-		return nil, err
-	}
-
-	return model.Posts{post}, nil
 }

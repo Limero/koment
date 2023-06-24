@@ -1,10 +1,8 @@
 package reddit
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/url"
-	"os"
 	"strings"
 
 	"github.com/limero/koment/lib/helper"
@@ -29,9 +27,6 @@ func (s Reddit) GetInput(url *url.URL, _ ...string) (*model.SiteInput, error) {
 }
 
 func (s Reddit) Fetch(fi model.SiteInput) (model.Posts, error) {
-	if fi.Demo {
-		return s.getFromExampleFile()
-	}
 	return s.getFromApi(fi.Category, fi.ID)
 }
 
@@ -47,20 +42,6 @@ func (s Reddit) getFromApi(subReddit string, threadID string) (model.Posts, erro
 
 	if len(resp) == 0 {
 		return nil, fmt.Errorf("no posts found, probably rate limited")
-	}
-
-	return resp.toModel()
-}
-
-func (s Reddit) getFromExampleFile() (model.Posts, error) {
-	data, err := os.ReadFile("lib/demo/reddit-example-api.json")
-	if err != nil {
-		return nil, err
-	}
-
-	var resp Listings
-	if err = json.Unmarshal(data, &resp); err != nil {
-		return nil, err
 	}
 
 	return resp.toModel()
