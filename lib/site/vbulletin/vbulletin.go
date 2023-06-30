@@ -21,7 +21,37 @@ func NewVbulletin() Vbulletin {
 
 func (s Vbulletin) GetInput(url *url.URL, _ ...string) (*model.SiteInput, error) {
 	if !strings.Contains(url.Path, "/forum/") {
-		return nil, fmt.Errorf("invalid path %q", url.Path)
+		res, err := http.Get(url.String())
+		if err != nil {
+			return nil, err
+		}
+		defer res.Body.Close()
+
+		doc, err := goquery.NewDocumentFromReader(res.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		var foundUrl string
+		doc.Find("a[href]").Each(func(_ int, s *goquery.Selection) {
+			href := s.AttrOr("href", "")
+			if strings.Contains(href, "/node/") {
+				foundUrl = href
+				return
+			}
+		})
+		if foundUrl != "" {
+			u, err := url.Parse(foundUrl)
+			if err != nil {
+				return nil, err
+			}
+			return &model.SiteInput{
+				SiteName: model.SiteVbulletin,
+				FullUrl:  u,
+			}, nil
+		}
+
+		return nil, fmt.Errorf("could not find any comments for %q", url)
 	}
 
 	return &model.SiteInput{
