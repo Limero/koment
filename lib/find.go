@@ -24,7 +24,7 @@ func FindComments(urlString string) (*model.SiteInput, error) {
 	case "feber.se", "tjock.se":
 		site := disqus.NewDisqus()
 		return site.GetInput(parsedURL, "feber")
-	case "phoronix.com":
+	case "phoronix.com", "forum.vbulletin.com":
 		site := vbulletin.NewVbulletin()
 		return site.GetInput(parsedURL)
 	case "reddit.com", "old.reddit.com":
