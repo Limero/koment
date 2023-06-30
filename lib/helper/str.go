@@ -19,3 +19,10 @@ func GetLastBetween(s, from, to string) (string, error) {
 	f := strings.Split(s, from)
 	return strings.Split(f[len(f)-1], to)[0], nil
 }
+
+func CleanText(t string) string {
+	t = strings.TrimLeft(t, "\n")
+	t = strings.TrimRight(t, "\n")
+	t = strings.TrimSpace(t)
+	return t
+}
