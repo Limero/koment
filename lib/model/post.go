@@ -1,6 +1,9 @@
 package model
 
-import "time"
+import (
+	"sort"
+	"time"
+)
 
 type Author struct {
 	Name string
@@ -37,4 +40,13 @@ func (posts Posts) AppendAt(newPosts Posts, index int) Posts {
 	result = append(result, posts[:index]...)
 	result = append(result, newPosts...)
 	return append(result, posts[index:]...)
+}
+
+func (posts Posts) SortByDepth() {
+	sort.Slice(posts, func(i, j int) bool {
+		if posts[i].Depth == 0 || posts[j].Depth == 0 {
+			return false
+		}
+		return posts[i].Depth < posts[j].Depth
+	})
 }

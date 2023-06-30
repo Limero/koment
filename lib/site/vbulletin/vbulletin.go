@@ -76,19 +76,22 @@ func (s Vbulletin) getFromHttp(url *url.URL) (model.Posts, error) {
 		return model.Posts{}, err
 	}
 
-	fromPosts := doc.Find(".b-post")
-	posts := make(model.Posts, fromPosts.Length())
-	fromPosts.Each(func(i int, s *goquery.Selection) {
+	posts := make(model.Posts, 0)
+	doc.Find(".b-post").Each(func(_ int, s *goquery.Selection) {
 		createdAtInt, _ := strconv.ParseInt(s.AttrOr("data-node-publishdate", ""), 10, 64)
 		createdAt := time.Unix(createdAtInt, 0)
 
 		upvotes, _ := strconv.Atoi(s.Find(".votecount").Text())
 
+		replyTo := s.Find("a[title='View Post']").AttrOr("href", "")
+		replyToUrl, _ := url.Parse(replyTo)
+		replyTo = replyToUrl.Query().Get("p")
+
 		// remove any quoted messages
 		s.Find(".bbcode_container").Remove()
 		s.Find(".b-bbcode").Remove()
 
-		posts[i] = model.Post{
+		newPost := model.Post{
 			ID:    s.AttrOr("data-node-id", ""),
 			Depth: 0,
 			Author: model.Author{
@@ -99,7 +102,19 @@ func (s Vbulletin) getFromHttp(url *url.URL) (model.Posts, error) {
 			Upvotes:   &upvotes,
 			CreatedAt: &createdAt,
 		}
+
+		if replyTo != "" {
+			for i, p := range posts {
+				if p.ID == replyTo {
+					newPost.Depth = p.Depth + 1
+					posts = posts.AppendAt(model.Posts{newPost}, i)
+				}
+			}
+		} else {
+			posts = append(posts, newPost)
+		}
 	})
 
+	posts.SortByDepth()
 	return posts, nil
 }
