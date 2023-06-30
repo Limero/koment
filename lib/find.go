@@ -8,6 +8,7 @@ import (
 	"github.com/limero/koment/lib/model"
 	"github.com/limero/koment/lib/site/disqus"
 	"github.com/limero/koment/lib/site/reddit"
+	"github.com/limero/koment/lib/site/vbulletin"
 	"github.com/limero/koment/lib/site/ycombinator"
 	"github.com/limero/koment/lib/site/youtube"
 )
@@ -23,6 +24,9 @@ func FindComments(urlString string) (*model.SiteInput, error) {
 	case "feber.se", "tjock.se":
 		site := disqus.NewDisqus()
 		return site.GetInput(parsedURL, "feber")
+	case "phoronix.com":
+		site := vbulletin.NewVbulletin()
+		return site.GetInput(parsedURL)
 	case "reddit.com", "old.reddit.com":
 		site := reddit.NewReddit()
 		return site.GetInput(parsedURL)

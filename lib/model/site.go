@@ -9,6 +9,7 @@ const (
 
 	SiteDisqus      SiteName = "disqus"
 	SiteReddit      SiteName = "reddit"
+	SiteVbulletin   SiteName = "vbulletin"
 	SiteYcombinator SiteName = "ycombinator" // Hacker News
 	SiteYoutube     SiteName = "youtube"
 )
@@ -18,6 +19,7 @@ func AllSites() []SiteName {
 		SiteDemo,
 		SiteDisqus,
 		SiteReddit,
+		SiteVbulletin,
 		SiteYcombinator,
 		SiteYoutube,
 	}
@@ -41,6 +43,7 @@ type SiteInput struct {
 	SiteName     SiteName
 	ID           string
 	Category     string
+	FullUrl      *url.URL
 	ContinueFrom *ContinueFrom
 	ApiKey       string
 }
