@@ -44,13 +44,11 @@ func TestTextToLines(t *testing.T) {
 			input:    "a\n\n\na",
 			expected: []string{"a", "", "a"},
 		},
-		/*
-			{
-				name:     "with extra linebreaks",
-				input:    "\na\na",
-				expected: []string{"a"},
-			},
-		*/
+		{
+			name:     "with extra linebreaks",
+			input:    "\na\na",
+			expected: []string{"a", "", "a"},
+		},
 		/*
 			{
 				name:     "with extra spaces",
