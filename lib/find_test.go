@@ -14,13 +14,20 @@ func TestFindComments(t *testing.T) {
 		url      string
 		expected *model.SiteInput
 	}{
+		{
+			name: "demo",
+			url:  "demo",
+			expected: &model.SiteInput{
+				SiteName: model.SiteDemo,
+			},
+		},
 		// TODO: Mock Disqus
 		/*
 			{
 				name: "feber",
 				url:  "https://feber.se/abc/def/123456/",
-				expected: &model.FindResults{
-					Site: model.SiteDisqus,
+				expected: &model.SiteInput{
+					SiteName: model.SiteDisqus,
 					ID:   "abc",
 				},
 			},

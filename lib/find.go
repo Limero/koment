@@ -14,6 +14,12 @@ import (
 )
 
 func FindComments(urlString string) (*model.SiteInput, error) {
+	if strings.EqualFold(urlString, "demo") {
+		return &model.SiteInput{
+			SiteName: model.SiteDemo,
+		}, nil
+	}
+
 	parsedURL, err := url.Parse(urlString)
 	if err != nil {
 		return nil, err

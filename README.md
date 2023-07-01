@@ -11,7 +11,9 @@ go install github.com/limero/koment@latest
 ## Usage
 
 ```
-koment get <url>
+koment <url>
+or
+koment demo
 ```
 
 ## Development
