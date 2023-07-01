@@ -24,7 +24,9 @@ func (a *App) ViewerMode() {
 		a.SearchPrev()
 	case "enter":
 		if a.threads[a.activeThread].Posts[a.activePost].Stub != nil {
-			a.ContinueStub()
+			go func() {
+				a.ContinueStub()
+			}()
 		}
 	case "quit":
 		a.run = false
