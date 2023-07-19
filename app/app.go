@@ -67,7 +67,7 @@ func (a *App) RunApp() {
 
 		a.threads = model.PostsToThreads(posts)
 		a.loading = false
-		a.screen.PostEvent(tcell.NewEventInterrupt(nil))
+		a.Refresh()
 	}()
 
 	shouldCenter := false
@@ -115,4 +115,12 @@ func (a *App) RunApp() {
 			a.ViewerMode()
 		}
 	}
+}
+
+func (a *App) Refresh() {
+	if a.screen == nil {
+		return
+	}
+	// Send a nil event to the waiting event listener to redraw everything
+	a.screen.PostEvent(tcell.NewEventInterrupt(nil))
 }

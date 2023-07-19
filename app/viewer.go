@@ -64,4 +64,6 @@ func (a *App) ContinueStub() {
 			},
 		})
 	}
+
+	a.Refresh()
 }
