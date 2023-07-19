@@ -56,8 +56,8 @@ func (a *App) RunApp() {
 
 	a.Site = lib.NewSite(a.SiteInput.SiteName)
 
+	a.loading = true
 	go func() {
-		a.loading = true
 		posts, err := a.Site.Fetch(a.SiteInput)
 		if err != nil {
 			a.Fatal(err.Error())
