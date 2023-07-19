@@ -34,7 +34,10 @@ func (a *App) ViewerMode() {
 }
 
 func (a *App) ContinueStub() {
-	activePost := a.threads[a.activeThread].Posts[a.activePost]
+	activeThread := &a.threads[a.activeThread]
+	activePostIndex := a.activePost
+
+	activePost := activeThread.Posts[activePostIndex]
 	if activePost.Stub.Key == "" {
 		a.Error("No more replies can be fetched on this thread")
 		return
@@ -50,12 +53,12 @@ func (a *App) ContinueStub() {
 		return
 	}
 
-	a.threads[a.activeThread].Posts = a.threads[a.activeThread].Posts.
-		RemoveAt(a.activePost). // remove stub
-		AppendAt(posts, a.activePost)
+	activeThread.Posts = activeThread.Posts.
+		RemoveAt(activePostIndex). // remove stub
+		AppendAt(posts, activePostIndex)
 
 	if len(posts) < activePost.Stub.Count {
-		a.threads[a.activeThread].Posts = append(a.threads[a.activeThread].Posts, model.Post{
+		activeThread.Posts = append(activeThread.Posts, model.Post{
 			ID:    uuid.NewString(),
 			Depth: activePost.Depth,
 			Stub: &model.Stub{
