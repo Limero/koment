@@ -10,7 +10,7 @@ func (a *App) SetViewerMode() {
 }
 
 func (a *App) ViewerMode() {
-	a.screen.Sync()
+	a.screen.Show()
 	var action string
 	action, a.activeThread, a.activePost = HandleViewerInput(a.screen, a.threads, a.activeThread, a.activePost)
 	switch action {

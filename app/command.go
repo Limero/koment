@@ -8,7 +8,7 @@ func (a *App) SetCommandMode(cmd string) {
 }
 
 func (a *App) CommandMode() {
-	a.screen.Sync()
+	a.screen.Show()
 	action, char := HandleCommandInput(a.screen)
 	switch action {
 	case "command-add":

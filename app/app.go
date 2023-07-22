@@ -94,7 +94,7 @@ func (a *App) RunApp() {
 		if a.infoMsg != "" {
 			drawInfo(a.Style, view, a.infoLevel, a.infoMsg)
 			if a.infoLevel == "fatal" {
-				a.screen.Sync()
+				a.screen.Show()
 				PauseUntilInput(a.screen)
 				// TODO: No need to panic, but just println doesn't seem to output anything
 				panic(a.infoMsg)
@@ -104,7 +104,7 @@ func (a *App) RunApp() {
 
 		if a.loading {
 			drawLoading(a.Style, view, fmt.Sprintf("Loading comments from %s...", a.SiteInput.SiteName))
-			a.screen.Sync()
+			a.screen.Show()
 		}
 
 		switch a.mode {
