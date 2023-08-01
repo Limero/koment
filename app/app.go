@@ -1,6 +1,7 @@
 package app
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/gdamore/tcell/v2"
@@ -36,19 +37,17 @@ func NewApp() App {
 	}
 }
 
-func (a *App) RunApp() {
+func (a *App) RunApp() error {
 	tcell.SetEncodingFallback(tcell.EncodingFallbackASCII)
 	var err error
 	a.screen, err = tcell.NewScreen()
 	if err != nil {
-		fmt.Printf("Error creating screen: %s\n", err)
-		return
+		return fmt.Errorf("Error creating screen: %s\n", err)
 	}
 	defer a.screen.Fini()
 
 	if err = a.screen.Init(); err != nil {
-		fmt.Printf("Error initializing screen: %s\n", err)
-		return
+		return fmt.Errorf("Error initializing screen: %s\n", err)
 	}
 
 	a.screen.Clear()
@@ -96,8 +95,7 @@ func (a *App) RunApp() {
 			if a.infoLevel == "fatal" {
 				a.screen.Show()
 				PauseUntilInput(a.screen)
-				// TODO: No need to panic, but just println doesn't seem to output anything
-				panic(a.infoMsg)
+				return errors.New(a.infoMsg)
 			}
 			a.infoMsg = ""
 		}
@@ -115,6 +113,7 @@ func (a *App) RunApp() {
 			a.ViewerMode()
 		}
 	}
+	return nil
 }
 
 func (a *App) Refresh() {
