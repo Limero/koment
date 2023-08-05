@@ -37,20 +37,23 @@ func NewApp() App {
 	}
 }
 
-func (a *App) RunApp() error {
+func (a *App) InitScreen() error {
 	tcell.SetEncodingFallback(tcell.EncodingFallbackASCII)
 	var err error
 	a.screen, err = tcell.NewScreen()
 	if err != nil {
 		return fmt.Errorf("Error creating screen: %s\n", err)
 	}
-	defer a.screen.Fini()
 
 	if err = a.screen.Init(); err != nil {
 		return fmt.Errorf("Error initializing screen: %s\n", err)
 	}
 
-	a.screen.Clear()
+	return nil
+}
+
+func (a *App) RunApp() error {
+	defer a.screen.Fini()
 	view := views.NewViewPort(a.screen, 0, 0, -1, -1)
 
 	a.Site = lib.NewSite(a.SiteInput.SiteName)

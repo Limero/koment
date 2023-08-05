@@ -23,6 +23,10 @@ func main() {
 
 	app := app.NewApp()
 	app.SiteInput = *siteInput
+
+	if err := app.InitScreen(); err != nil {
+		log.Fatal(err)
+	}
 	if err := app.RunApp(); err != nil {
 		log.Fatal(err)
 	}
