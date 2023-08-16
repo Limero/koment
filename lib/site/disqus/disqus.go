@@ -89,7 +89,7 @@ func (s Disqus) getFromApi(apiKey string, threadID string) (model.Posts, error) 
 
 func (s Disqus) getThreadIDFromEmbedPage(name string, number string) (string, error) {
 	if name == "" || number == "" {
-		return "", fmt.Errorf("Either name (%s) or number (%s) is empty", name, number)
+		return "", fmt.Errorf("either name (%s) or number (%s) is empty", name, number)
 	}
 	url := "https://disqus.com/embed/comments/?f=" + name + "&t_i=" + number + "#version=93621f724643ecd0f307feb8123718cb"
 	body, err := helper.GetPageBodyString(url)
