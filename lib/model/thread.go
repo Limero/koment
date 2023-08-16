@@ -8,14 +8,14 @@ type Thread struct {
 
 type Threads []Thread
 
-func PostsToThreads(posts []Post) Threads {
+func PostsToThreads(posts Posts) Threads {
 	numThreads := 0
 	for _, p := range posts {
 		if p.Depth == 0 {
 			numThreads++
 		}
 	}
-	threads := make([]Thread, 0, numThreads)
+	threads := make(Threads, 0, numThreads)
 
 	var thread *Thread
 	for i, p := range posts {
@@ -24,7 +24,7 @@ func PostsToThreads(posts []Post) Threads {
 				threads = append(threads, *thread)
 			}
 			thread = &Thread{
-				Posts: []Post{},
+				Posts: Posts{},
 			}
 		}
 		thread.Posts = append(thread.Posts, posts[i])
@@ -35,8 +35,8 @@ func PostsToThreads(posts []Post) Threads {
 	return threads
 }
 
-func (threads Threads) FindPostsContaining(s string) []Post {
-	posts := make([]Post, 0)
+func (threads Threads) FindPostsContaining(s string) Posts {
+	posts := make(Posts, 0)
 	for _, thread := range threads {
 		for i := range thread.Posts {
 			if strings.Contains(thread.Posts[i].Message, s) {
