@@ -4,7 +4,7 @@ import "github.com/limero/koment/lib/model"
 
 type Search struct {
 	Term    string
-	Results []model.Post
+	Results model.Posts
 	Index   int
 }
 
