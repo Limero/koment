@@ -127,5 +127,5 @@ func (a *App) Refresh() {
 		return
 	}
 	// Send a nil event to the waiting event listener to redraw everything
-	a.screen.PostEvent(tcell.NewEventInterrupt(nil))
+	_ = a.screen.PostEvent(tcell.NewEventInterrupt(nil))
 }

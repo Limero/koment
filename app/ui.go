@@ -16,10 +16,10 @@ func drawLoading(style Style, view *views.ViewPort, msg string) {
 	}
 }
 
-func drawAuthorLine(style Style, view *views.ViewPort, post model.Post, x int, y int) int {
+func drawAuthorLine(style Style, view *views.ViewPort, post model.Post, x int, y int) {
 	view.SetContent(x, y, style.AuthorStartChar, nil, style.AuthorStart)
 	x++
-	for _, c := range []rune(post.Author.Name) {
+	for _, c := range post.Author.Name {
 		view.SetContent(x, y, c, nil, style.AuthorName)
 		x++
 	}
@@ -32,7 +32,7 @@ func drawAuthorLine(style Style, view *views.ViewPort, post model.Post, x int, y
 		x++
 		view.SetContent(x, y, style.UpVotesChar, nil, style.UpVotesIcon)
 		x++
-		for _, c := range []rune(strconv.Itoa(*post.Upvotes)) {
+		for _, c := range strconv.Itoa(*post.Upvotes) {
 			view.SetContent(x, y, c, nil, style.UpVotesNum)
 			x++
 		}
@@ -41,7 +41,7 @@ func drawAuthorLine(style Style, view *views.ViewPort, post model.Post, x int, y
 		x++
 		view.SetContent(x, y, style.DownVotesChar, nil, style.DownVotesIcon)
 		x++
-		for _, c := range []rune(strconv.Itoa(*post.Downvotes)) {
+		for _, c := range strconv.Itoa(*post.Downvotes) {
 			view.SetContent(x, y, c, nil, style.DownVotesNum)
 			x++
 		}
@@ -50,13 +50,11 @@ func drawAuthorLine(style Style, view *views.ViewPort, post model.Post, x int, y
 		x++
 		view.SetContent(x, y, style.SeparatorChar, nil, style.Separator)
 		x += 2
-		for _, c := range []rune(post.CreatedAt.Format(time.DateTime)) {
+		for _, c := range post.CreatedAt.Format(time.DateTime) {
 			view.SetContent(x, y, c, nil, style.Time)
 			x++
 		}
 	}
-
-	return x
 }
 
 func drawStub(style Style, view *views.ViewPort, post model.Post, activePostID string, x int, y int) {
@@ -67,7 +65,7 @@ func drawStub(style Style, view *views.ViewPort, post model.Post, activePostID s
 	}
 	view.SetContent(x, y, style.StubStartChar, nil, st)
 	x++
-	for _, c := range []rune(fmt.Sprintf("%d more replies", post.Stub.Count)) {
+	for _, c := range fmt.Sprintf("%d more replies", post.Stub.Count) {
 		view.SetContent(x, y, c, nil, st)
 		x++
 	}
@@ -93,7 +91,7 @@ func drawViewer(style Style, view *views.ViewPort, threads model.Threads, active
 			}
 
 			// Author line
-			x = drawAuthorLine(style, view, post, x, y)
+			drawAuthorLine(style, view, post, x, y)
 			y++
 
 			// Main message
@@ -109,7 +107,7 @@ func drawViewer(style Style, view *views.ViewPort, threads model.Threads, active
 					x++
 				}
 
-				for _, c := range []rune(line) {
+				for _, c := range line {
 					view.SetContent(x, y, c, nil, style.RegularMessage)
 					x++
 				}
@@ -126,7 +124,7 @@ func drawCommandPrompt(style Style, view *views.ViewPort, command string) {
 	_, _, width, height := view.GetVisible()
 
 	x := 0
-	for _, c := range []rune(":" + command) {
+	for _, c := range ":" + command {
 		view.SetContent(x, height, c, nil, style.Command)
 		x++
 	}
@@ -145,7 +143,7 @@ func drawInfo(style Style, view *views.ViewPort, infoLevel InfoLevel, msg string
 	}
 
 	x := 0
-	for _, c := range []rune(msg) {
+	for _, c := range msg {
 		view.SetContent(x, height, c, nil, messageStyle)
 		x++
 	}
