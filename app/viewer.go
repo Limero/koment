@@ -6,7 +6,7 @@ import (
 )
 
 func (a *App) SetViewerMode() {
-	a.mode = "viewer"
+	a.mode = ModeViewer
 }
 
 func (a *App) ViewerMode() {

@@ -4,7 +4,7 @@ import "strings"
 
 func (a *App) SetCommandMode(cmd string) {
 	a.command = cmd
-	a.mode = "command"
+	a.mode = ModeCommand
 }
 
 func (a *App) CommandMode() {

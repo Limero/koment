@@ -20,7 +20,7 @@ type App struct {
 	search       Search
 	activeThread int
 	activePost   int
-	mode         string
+	mode         Mode
 	command      string
 	infoMsg      string
 	infoLevel    InfoLevel
@@ -31,7 +31,7 @@ type App struct {
 func NewApp() App {
 	return App{
 		Style:     DefaultStyle(),
-		mode:      "viewer",
+		mode:      ModeViewer,
 		infoLevel: InfoLevelInfo,
 		run:       true,
 	}
@@ -112,10 +112,10 @@ func (a *App) RunApp() error {
 		}
 
 		switch a.mode {
-		case "command":
+		case ModeCommand:
 			drawCommandPrompt(a.Style, view, a.command)
 			a.CommandMode()
-		case "viewer":
+		case ModeViewer:
 			a.ViewerMode()
 		}
 	}
