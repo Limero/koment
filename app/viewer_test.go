@@ -131,7 +131,7 @@ func TestContinueStub(t *testing.T) {
 			a.ContinueStub()
 
 			if tt.expectedErr != "" {
-				assert.Equal(t, "error", a.infoLevel)
+				assert.Equal(t, InfoLevelError, a.infoLevel)
 				assert.Contains(t, a.infoMsg, tt.expectedErr)
 			} else {
 				// posts are added and stub is removed

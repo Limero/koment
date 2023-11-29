@@ -23,7 +23,7 @@ type App struct {
 	mode         string
 	command      string
 	infoMsg      string
-	infoLevel    string
+	infoLevel    InfoLevel
 	run          bool
 	loading      bool
 }
@@ -32,7 +32,7 @@ func NewApp() App {
 	return App{
 		Style:     DefaultStyle(),
 		mode:      "viewer",
-		infoLevel: "info",
+		infoLevel: InfoLevelInfo,
 		run:       true,
 	}
 }
@@ -95,10 +95,10 @@ func (a *App) RunApp() error {
 
 		if a.infoMsg != "" {
 			drawInfo(a.Style, view, a.infoLevel, a.infoMsg)
-			if a.infoLevel == "fatal" || a.infoLevel == "terminate" {
+			if a.infoLevel == InfoLevelFatal || a.infoLevel == InfoLevelTerminate {
 				a.screen.Show()
 				PauseUntilInput(a.screen)
-				if a.infoLevel == "fatal" {
+				if a.infoLevel == InfoLevelFatal {
 					return errors.New(a.infoMsg)
 				}
 				return nil

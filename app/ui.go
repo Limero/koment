@@ -134,12 +134,12 @@ func drawCommandPrompt(style Style, view *views.ViewPort, command string) {
 	}
 }
 
-func drawInfo(style Style, view *views.ViewPort, infoLevel string, msg string) {
+func drawInfo(style Style, view *views.ViewPort, infoLevel InfoLevel, msg string) {
 	_, _, width, height := view.GetVisible()
 
 	messageStyle := style.InfoMessage
 	switch infoLevel {
-	case "error", "fatal":
+	case InfoLevelError, InfoLevelFatal:
 		messageStyle = style.ErrorMessage
 	}
 
