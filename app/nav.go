@@ -17,7 +17,7 @@ func HandleViewerInput(screen tcell.Screen, threads model.Threads, t, p int) (st
 			case 'j':
 				t, p = NavDownPost(threads, t, p)
 			case 'J':
-				t, p = NavDownThread(threads, t, p)
+				t, p = NavDownThread(threads, t)
 			case 'k':
 				t, p = NavUpPost(threads, t, p)
 			case 'K':
@@ -25,7 +25,7 @@ func HandleViewerInput(screen tcell.Screen, threads model.Threads, t, p int) (st
 			case 'g':
 				t, p = NavTop()
 			case 'G':
-				t, p = NavBottom(threads, t)
+				t, p = NavBottom(threads)
 			case 'n':
 				return "search-next", t, p
 			case 'N':
@@ -47,7 +47,7 @@ func HandleViewerInput(screen tcell.Screen, threads model.Threads, t, p int) (st
 			}
 		case tcell.KeyDown:
 			if ev.Modifiers() == tcell.ModShift {
-				t, p = NavDownThread(threads, t, p)
+				t, p = NavDownThread(threads, t)
 			} else {
 				t, p = NavDownPost(threads, t, p)
 			}
@@ -134,10 +134,10 @@ func NavUpThread(t int) (int, int) {
 	return t, 0
 }
 
-func NavDownThread(threads model.Threads, t, p int) (int, int) {
+func NavDownThread(threads model.Threads, t int) (int, int) {
+	p := 0
 	if t < len(threads)-1 {
 		t++
-		p = 0
 	} else {
 		p = len(threads[t].Posts) - 1
 	}
@@ -148,7 +148,7 @@ func NavTop() (int, int) {
 	return 0, 0
 }
 
-func NavBottom(threads model.Threads, t int) (int, int) {
-	t = len(threads) - 1
+func NavBottom(threads model.Threads) (int, int) {
+	t := len(threads) - 1
 	return t, len(threads[t].Posts) - 1
 }
