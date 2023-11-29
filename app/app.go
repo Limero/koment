@@ -42,11 +42,11 @@ func (a *App) InitScreen() error {
 	var err error
 	a.screen, err = tcell.NewScreen()
 	if err != nil {
-		return fmt.Errorf("Error creating screen: %s\n", err)
+		return fmt.Errorf("Error creating screen: %w", err)
 	}
 
 	if err = a.screen.Init(); err != nil {
-		return fmt.Errorf("Error initializing screen: %s\n", err)
+		return fmt.Errorf("Error initializing screen: %w", err)
 	}
 
 	return nil
