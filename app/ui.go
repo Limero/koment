@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gdamore/tcell/v2/views"
+	"github.com/limero/koment/app/helper"
 	"github.com/limero/koment/lib/model"
 )
 
@@ -96,7 +97,7 @@ func drawViewer(style Style, view *views.ViewPort, threads model.Threads, active
 			y++
 
 			// Main message
-			lines := TextToLines(post.Message, style.MessageLength)
+			lines := helper.TextToLines(post.Message, style.MessageLength)
 			if post.ID == activePostID {
 				activeMsgLength = len(lines)
 				activeMsgY = y
