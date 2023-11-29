@@ -64,7 +64,7 @@ func (a *App) RunApp() error {
 		if err != nil {
 			a.Fatal(err.Error())
 		} else if len(posts) == 0 {
-			a.Fatal("No comments available")
+			a.Terminate("No comments available")
 		}
 
 		a.threads = model.PostsToThreads(posts)
@@ -95,10 +95,13 @@ func (a *App) RunApp() error {
 
 		if a.infoMsg != "" {
 			drawInfo(a.Style, view, a.infoLevel, a.infoMsg)
-			if a.infoLevel == "fatal" {
+			if a.infoLevel == "fatal" || a.infoLevel == "terminate" {
 				a.screen.Show()
 				PauseUntilInput(a.screen)
-				return errors.New(a.infoMsg)
+				if a.infoLevel == "fatal" {
+					return errors.New(a.infoMsg)
+				}
+				return nil
 			}
 			a.infoMsg = ""
 		}
