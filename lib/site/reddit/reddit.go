@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/limero/koment/lib/helper"
+	"github.com/limero/koment/lib/internal/helper"
 	"github.com/limero/koment/lib/model"
 )
 

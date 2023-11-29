@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/limero/koment/lib/helper"
+	"github.com/limero/koment/lib/internal/helper"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
