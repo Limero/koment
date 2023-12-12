@@ -30,7 +30,7 @@ func (s Disqus) GetInput(url *url.URL, v ...string) (*model.SiteInput, error) {
 
 	apiKey, err := s.getApiKey()
 	if err != nil {
-		return nil, err
+		return nil, errors.Join(err, errors.New("failed to retrieve disqus api key"))
 	}
 
 	return &model.SiteInput{
@@ -54,8 +54,21 @@ func (s Disqus) getApiKey() (string, error) {
 		return apiKey, nil
 	}
 
-	url := "https://c.disquscdn.com/next/embed/common.bundle.6719fe9dbe70a5a047052a905ea1cbc5.js"
+	// if version changes, we could get it from the url instead of hardcoding
+	disqusVersion := "46355a98bc48ecd1c0c19b65d17b59ed"
+
+	url := "https://c.disquscdn.com/next/embed/lounge.load." + disqusVersion + ".js"
 	body, err := helper.GetPageBodyString(url)
+	if err != nil {
+		return "", err
+	}
+	bundleVersion, err := helper.GetLastBetween(body, "common.bundle.", ".js")
+	if err != nil {
+		return "", err
+	}
+
+	url = "https://c.disquscdn.com/next/embed/common.bundle." + bundleVersion + ".js"
+	body, err = helper.GetPageBodyString(url)
 	if err != nil {
 		return "", err
 	}
