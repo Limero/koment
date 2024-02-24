@@ -1,10 +1,13 @@
 package disqus
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 	"net/url"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/limero/koment/lib/internal/helper"
 	"github.com/limero/koment/lib/model"
 )
@@ -105,9 +108,23 @@ func (s Disqus) getThreadIDFromEmbedPage(name string, number string) (string, er
 		return "", fmt.Errorf("either name (%s) or number (%s) is empty", name, number)
 	}
 	url := "https://disqus.com/embed/comments/?f=" + name + "&t_i=" + number + "#version=93621f724643ecd0f307feb8123718cb"
-	body, err := helper.GetPageBodyString(url)
+
+	res, err := http.Get(url)
 	if err != nil {
 		return "", err
 	}
-	return helper.GetLastBetween(body, "\"id\":\"", "\"")
+	defer res.Body.Close()
+
+	doc, err := goquery.NewDocumentFromReader(res.Body)
+	if err != nil {
+		return "", err
+	}
+
+	var data EmbedPage
+
+	jsonData := doc.Find("script#disqus-threadData").First().Text()
+	if err = json.Unmarshal([]byte(jsonData), &data); err != nil {
+		return "", err
+	}
+	return data.Response.Thread.ID, nil
 }

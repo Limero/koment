@@ -16,7 +16,11 @@ func GetPageToJSON[T any](url string, res T) error {
 
 	if resp.StatusCode >= 400 && resp.StatusCode < 600 {
 		// 4xx or 5xx error
-		return fmt.Errorf("got status %q", resp.Status)
+		body, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return fmt.Errorf("got status %q", resp.Status)
+		}
+		return fmt.Errorf("got status %q with error: %s", resp.Status, body)
 	}
 
 	return json.NewDecoder(resp.Body).Decode(&res)
