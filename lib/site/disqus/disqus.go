@@ -47,42 +47,6 @@ func (s Disqus) Fetch(fi model.SiteInput) (model.Posts, error) {
 	return s.getFromApi(fi.ApiKey, fi.ID)
 }
 
-func (s Disqus) getApiKey() (string, error) {
-	apiKeyFile := helper.CachePath("disqus-api-key.txt")
-	apiKey, err := helper.ReadFileIfExists(apiKeyFile)
-	if err != nil {
-		return "", err
-	}
-	if apiKey != "" {
-		return apiKey, nil
-	}
-
-	// if version changes, we could get it from the url instead of hardcoding
-	disqusVersion := "46355a98bc48ecd1c0c19b65d17b59ed"
-
-	url := "https://c.disquscdn.com/next/embed/lounge.load." + disqusVersion + ".js"
-	body, err := helper.GetPageBodyString(url)
-	if err != nil {
-		return "", err
-	}
-	bundleVersion, err := helper.GetLastBetween(body, "common.bundle.", ".js")
-	if err != nil {
-		return "", err
-	}
-
-	url = "https://c.disquscdn.com/next/embed/common.bundle." + bundleVersion + ".js"
-	body, err = helper.GetPageBodyString(url)
-	if err != nil {
-		return "", err
-	}
-	apiKey, err = helper.GetLastBetween(body, "embedAPI:\"", "\"")
-	if err != nil {
-		return "", err
-	}
-
-	return apiKey, helper.WriteFile(apiKey, apiKeyFile)
-}
-
 func (s Disqus) getFromApi(apiKey string, threadID string) (model.Posts, error) {
 	limit := 100
 	order := "popular"
