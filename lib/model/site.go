@@ -28,8 +28,8 @@ func AllSites() []SiteName {
 func AllSitesAsStrings() []string {
 	allSites := AllSites()
 	sites := make([]string, len(allSites))
-	for _, site := range allSites {
-		sites = append(sites, string(site))
+	for i, site := range allSites {
+		sites[i] = string(site)
 	}
 	return sites
 }
