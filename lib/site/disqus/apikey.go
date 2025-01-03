@@ -22,11 +22,17 @@ func (s Disqus) getApiKey() (string, error) {
 }
 
 func (s Disqus) fetchApiKey() (string, error) {
-	// TODO: Fetch this version dynamically
-	disqusVersion := "006bbc905574fc5153c7814eb2dc65a8"
+	body, err := helper.GetPageBodyString("https://disqus.disqus.com/embed.js")
+	if err != nil {
+		return "", err
+	}
+	disqusVersion, err := helper.GetLastBetween(body, "lounge.load.", ".js")
+	if err != nil {
+		return "", err
+	}
 
 	url := "https://c.disquscdn.com/next/embed/lounge.load." + disqusVersion + ".js"
-	body, err := helper.GetPageBodyString(url)
+	body, err = helper.GetPageBodyString(url)
 	if err != nil {
 		return "", err
 	}
