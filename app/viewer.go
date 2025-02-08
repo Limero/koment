@@ -69,4 +69,5 @@ func (a *App) ContinueStub(ui ui.UI) {
 	}
 
 	ui.Refresh()
+	ui.Refresh() // TODO: Shouldn't need to call this twice
 }
