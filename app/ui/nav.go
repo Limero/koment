@@ -9,6 +9,7 @@ func (ui *ui) HandleViewerInput(threads model.Threads, t, p int) (string, int, i
 	ev := ui.screen.PollEvent()
 	switch ev := ev.(type) {
 	case *tcell.EventKey:
+		ui.Refresh()
 		switch ev.Key() {
 		case tcell.KeyRune:
 			switch ev.Rune() {
@@ -57,6 +58,7 @@ func (ui *ui) HandleViewerInput(threads model.Threads, t, p int) (string, int, i
 	case *tcell.EventResize:
 		ui.screen.Sync()
 	case *tcell.EventMouse:
+		ui.Refresh()
 		switch ev.Buttons() {
 		case tcell.WheelUp:
 			t, p = navUpPost(threads, t, p)
@@ -65,7 +67,6 @@ func (ui *ui) HandleViewerInput(threads model.Threads, t, p int) (string, int, i
 		}
 	}
 
-	ui.Refresh()
 	return "", t, p
 }
 
@@ -73,6 +74,7 @@ func (ui *ui) HandleCommandInput() (string, rune) {
 	ev := ui.screen.PollEvent()
 	switch ev := ev.(type) {
 	case *tcell.EventKey:
+		ui.Refresh()
 		switch ev.Key() {
 		case tcell.KeyRune:
 			return "command-add", ev.Rune()
@@ -89,7 +91,6 @@ func (ui *ui) HandleCommandInput() (string, rune) {
 		ui.screen.Sync()
 	}
 
-	ui.Refresh()
 	return "", 0
 }
 
