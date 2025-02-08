@@ -1,12 +1,12 @@
-package app
+package ui
 
 import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/limero/koment/lib/model"
 )
 
-func HandleViewerInput(screen tcell.Screen, threads model.Threads, t, p int) (string, int, int) {
-	ev := screen.PollEvent()
+func (ui *ui) HandleViewerInput(threads model.Threads, t, p int) (string, int, int) {
+	ev := ui.screen.PollEvent()
 	switch ev := ev.(type) {
 	case *tcell.EventKey:
 		switch ev.Key() {
@@ -15,17 +15,17 @@ func HandleViewerInput(screen tcell.Screen, threads model.Threads, t, p int) (st
 			case 'q', 'Q':
 				return "quit", t, p
 			case 'j':
-				t, p = NavDownPost(threads, t, p)
+				t, p = navDownPost(threads, t, p)
 			case 'J':
-				t, p = NavDownThread(threads, t)
+				t, p = navDownThread(threads, t)
 			case 'k':
-				t, p = NavUpPost(threads, t, p)
+				t, p = navUpPost(threads, t, p)
 			case 'K':
-				t, p = NavUpThread(t)
+				t, p = navUpThread(t)
 			case 'g':
-				t, p = NavTop()
+				t, p = navTop()
 			case 'G':
-				t, p = NavBottom(threads)
+				t, p = navBottom(threads)
 			case 'n':
 				return "search-next", t, p
 			case 'N':
@@ -36,39 +36,41 @@ func HandleViewerInput(screen tcell.Screen, threads model.Threads, t, p int) (st
 				return "search", t, p
 			}
 		case tcell.KeyCtrlL:
-			screen.Sync()
+			ui.screen.Sync()
 		case tcell.KeyCtrlC:
 			return "quit", t, p
 		case tcell.KeyUp:
 			if ev.Modifiers() == tcell.ModShift {
-				t, p = NavUpThread(t)
+				t, p = navUpThread(t)
 			} else {
-				t, p = NavUpPost(threads, t, p)
+				t, p = navUpPost(threads, t, p)
 			}
 		case tcell.KeyDown:
 			if ev.Modifiers() == tcell.ModShift {
-				t, p = NavDownThread(threads, t)
+				t, p = navDownThread(threads, t)
 			} else {
-				t, p = NavDownPost(threads, t, p)
+				t, p = navDownPost(threads, t, p)
 			}
 		case tcell.KeyEnter:
 			return "enter", t, p
 		}
 	case *tcell.EventResize:
-		screen.Sync()
+		ui.screen.Sync()
 	case *tcell.EventMouse:
 		switch ev.Buttons() {
 		case tcell.WheelUp:
-			t, p = NavUpPost(threads, t, p)
+			t, p = navUpPost(threads, t, p)
 		case tcell.WheelDown:
-			t, p = NavDownPost(threads, t, p)
+			t, p = navDownPost(threads, t, p)
 		}
 	}
+
+	ui.Refresh()
 	return "", t, p
 }
 
-func HandleCommandInput(screen tcell.Screen) (string, rune) {
-	ev := screen.PollEvent()
+func (ui *ui) HandleCommandInput() (string, rune) {
+	ev := ui.screen.PollEvent()
 	switch ev := ev.(type) {
 	case *tcell.EventKey:
 		switch ev.Key() {
@@ -84,14 +86,16 @@ func HandleCommandInput(screen tcell.Screen) (string, rune) {
 			return "quit", 0
 		}
 	case *tcell.EventResize:
-		screen.Sync()
+		ui.screen.Sync()
 	}
+
+	ui.Refresh()
 	return "", 0
 }
 
-func PauseUntilInput(screen tcell.Screen) {
+func (ui *ui) PauseUntilInput() {
 	for {
-		ev := screen.PollEvent()
+		ev := ui.screen.PollEvent()
 		switch ev.(type) {
 		case *tcell.EventKey:
 			return
@@ -99,7 +103,7 @@ func PauseUntilInput(screen tcell.Screen) {
 	}
 }
 
-func NavUpPost(threads model.Threads, t, p int) (int, int) {
+func navUpPost(threads model.Threads, t, p int) (int, int) {
 	p--
 	if p < 0 {
 		if t > 0 {
@@ -113,7 +117,7 @@ func NavUpPost(threads model.Threads, t, p int) (int, int) {
 	return t, p
 }
 
-func NavDownPost(threads model.Threads, t, p int) (int, int) {
+func navDownPost(threads model.Threads, t, p int) (int, int) {
 	p++
 	if p >= len(threads[t].Posts) {
 		if t < len(threads)-1 {
@@ -127,14 +131,14 @@ func NavDownPost(threads model.Threads, t, p int) (int, int) {
 	return t, p
 }
 
-func NavUpThread(t int) (int, int) {
+func navUpThread(t int) (int, int) {
 	if t > 0 {
 		t--
 	}
 	return t, 0
 }
 
-func NavDownThread(threads model.Threads, t int) (int, int) {
+func navDownThread(threads model.Threads, t int) (int, int) {
 	p := 0
 	if t < len(threads)-1 {
 		t++
@@ -144,11 +148,11 @@ func NavDownThread(threads model.Threads, t int) (int, int) {
 	return t, p
 }
 
-func NavTop() (int, int) {
+func navTop() (int, int) {
 	return 0, 0
 }
 
-func NavBottom(threads model.Threads) (int, int) {
+func navBottom(threads model.Threads) (int, int) {
 	t := len(threads) - 1
 	return t, len(threads[t].Posts) - 1
 }

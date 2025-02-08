@@ -1,15 +1,18 @@
 package app
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/limero/koment/app/ui"
+)
 
 func (a *App) SetCommandMode(cmd string) {
 	a.command = cmd
 	a.mode = ModeCommand
 }
 
-func (a *App) CommandMode() {
-	a.screen.Show()
-	action, char := HandleCommandInput(a.screen)
+func (a *App) CommandMode(ui ui.UI) {
+	action, char := ui.HandleCommandInput()
 	switch action {
 	case "command-add":
 		a.command += string(char)

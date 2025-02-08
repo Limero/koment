@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
+	"github.com/limero/koment/app/info"
 	"github.com/limero/koment/app/test"
 	"github.com/limero/koment/lib/model"
 	"github.com/stretchr/testify/assert"
@@ -12,6 +13,8 @@ import (
 )
 
 func TestContinueStub(t *testing.T) {
+	ui := test.MockUI{}
+
 	for _, tt := range []struct {
 		name          string
 		threads       model.Threads
@@ -128,10 +131,10 @@ func TestContinueStub(t *testing.T) {
 				threads: tt.threads,
 			}
 
-			a.ContinueStub()
+			a.ContinueStub(&ui)
 
 			if tt.expectedErr != "" {
-				assert.Equal(t, InfoLevelError, a.infoLevel)
+				assert.Equal(t, info.InfoLevelError, a.infoLevel)
 				assert.Contains(t, a.infoMsg, tt.expectedErr)
 			} else {
 				// posts are added and stub is removed

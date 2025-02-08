@@ -2,6 +2,7 @@ package app
 
 import (
 	"github.com/google/uuid"
+	"github.com/limero/koment/app/ui"
 	"github.com/limero/koment/lib/model"
 )
 
@@ -9,10 +10,9 @@ func (a *App) SetViewerMode() {
 	a.mode = ModeViewer
 }
 
-func (a *App) ViewerMode() {
-	a.screen.Show()
+func (a *App) ViewerMode(ui ui.UI) {
 	var action string
-	action, a.activeThread, a.activePost = HandleViewerInput(a.screen, a.threads, a.activeThread, a.activePost)
+	action, a.activeThread, a.activePost = ui.HandleViewerInput(a.threads, a.activeThread, a.activePost)
 	switch action {
 	case "command":
 		a.SetCommandMode("")
@@ -25,7 +25,7 @@ func (a *App) ViewerMode() {
 	case "enter":
 		if a.threads[a.activeThread].Posts[a.activePost].Stub != nil {
 			go func() {
-				a.ContinueStub()
+				a.ContinueStub(ui)
 			}()
 		}
 	case "quit":
@@ -33,7 +33,7 @@ func (a *App) ViewerMode() {
 	}
 }
 
-func (a *App) ContinueStub() {
+func (a *App) ContinueStub(ui ui.UI) {
 	activeThread := &a.threads[a.activeThread]
 	activePostIndex := a.activePost
 
@@ -68,5 +68,5 @@ func (a *App) ContinueStub() {
 		})
 	}
 
-	a.Refresh()
+	ui.Refresh()
 }

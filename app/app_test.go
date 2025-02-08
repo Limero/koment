@@ -3,7 +3,7 @@ package app
 import (
 	"testing"
 
-	"github.com/gdamore/tcell/v2"
+	"github.com/limero/koment/app/test"
 	"github.com/limero/koment/lib/model"
 )
 
@@ -12,11 +12,9 @@ func TestRunApp(t *testing.T) {
 	a.SiteInput = model.SiteInput{
 		SiteName: model.SiteDemo,
 	}
-
-	screen := tcell.NewSimulationScreen("")
-	a.screen = screen
+	ui := test.MockUI{}
 
 	go func() {
-		_ = a.RunApp()
+		_ = a.RunApp(&ui)
 	}()
 }
