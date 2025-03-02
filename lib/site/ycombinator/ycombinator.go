@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/limero/koment/lib/internal/helper"
+	"github.com/limero/koment/lib/internal/util"
 	"github.com/limero/koment/lib/model"
 )
 
@@ -36,7 +36,7 @@ func (s Ycombinator) getFromApi(id string, continueFrom *model.ContinueFrom) (mo
 
 	url := "https://hacker-news.firebaseio.com/v0/item/%s.json"
 	var resp Post
-	if err := helper.GetPageToJSON(fmt.Sprintf(url, id), &resp); err != nil {
+	if err := util.GetPageToJSON(fmt.Sprintf(url, id), &resp); err != nil {
 		return nil, err
 	}
 
@@ -45,7 +45,7 @@ func (s Ycombinator) getFromApi(id string, continueFrom *model.ContinueFrom) (mo
 	case "story":
 		for _, kid := range resp.Kids {
 			var newResp Post
-			if err := helper.GetPageToJSON(fmt.Sprintf(url, strconv.Itoa(kid)), &newResp); err != nil {
+			if err := util.GetPageToJSON(fmt.Sprintf(url, strconv.Itoa(kid)), &newResp); err != nil {
 				return nil, err
 			}
 

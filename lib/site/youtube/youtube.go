@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/limero/koment/lib/internal/helper"
+	"github.com/limero/koment/lib/internal/util"
 	"github.com/limero/koment/lib/model"
 )
 
@@ -39,7 +39,7 @@ func (s Youtube) getFromApi(videoID string, continueFrom *model.ContinueFrom) (m
 	}
 
 	var resp CommentsResponse
-	if err := helper.GetPageToJSON(fmt.Sprintf(
+	if err := util.GetPageToJSON(fmt.Sprintf(
 		"%s/api/v1/comments/%s/?continuation=%s",
 		s.invidiousInstance,
 		videoID,

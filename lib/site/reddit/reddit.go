@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/limero/koment/lib/internal/helper"
+	"github.com/limero/koment/lib/internal/util"
 	"github.com/limero/koment/lib/model"
 )
 
@@ -32,7 +32,7 @@ func (s Reddit) Fetch(fi model.SiteInput) (model.Posts, error) {
 
 func (s Reddit) getFromApi(subReddit string, threadID string) (model.Posts, error) {
 	var resp Listings
-	if err := helper.GetPageToJSON(fmt.Sprintf(
+	if err := util.GetPageToJSON(fmt.Sprintf(
 		"https://reddit.com/r/%s/comments/%s.json",
 		subReddit,
 		threadID,

@@ -5,18 +5,18 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/limero/koment/lib/internal/helper"
+	"github.com/limero/koment/lib/internal/util"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func Test_getApiKey(t *testing.T) {
 	s := NewDisqus()
-	apiKeyFile := helper.CachePath("disqus-api-key.txt")
+	apiKeyFile := util.CachePath("disqus-api-key.txt")
 	defer os.Remove(apiKeyFile)
 
 	t.Run("get cached api key", func(t *testing.T) {
-		helper.WriteFile("abc", apiKeyFile)
+		util.WriteFile("abc", apiKeyFile)
 		apiKey, err := s.getApiKey()
 		require.NoError(t, err)
 		assert.Equal(t, "abc", apiKey)

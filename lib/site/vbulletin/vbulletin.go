@@ -9,7 +9,7 @@ import (
 	"time"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/limero/koment/lib/internal/helper"
+	"github.com/limero/koment/lib/internal/util"
 	"github.com/limero/koment/lib/model"
 )
 
@@ -97,7 +97,7 @@ func (s Vbulletin) getFromHttp(url *url.URL) (model.Posts, error) {
 			Author: model.Author{
 				Name: s.Find(".author a").Text(),
 			},
-			Message: helper.CleanText(s.Find(".js-post__content-text").Text()),
+			Message: util.CleanText(s.Find(".js-post__content-text").Text()),
 
 			Upvotes:   &upvotes,
 			CreatedAt: &createdAt,

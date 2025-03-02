@@ -8,7 +8,7 @@ import (
 	"net/url"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/limero/koment/lib/internal/helper"
+	"github.com/limero/koment/lib/internal/util"
 	"github.com/limero/koment/lib/model"
 )
 
@@ -19,7 +19,7 @@ func NewDisqus() Disqus {
 }
 
 func (s Disqus) GetInput(url *url.URL, v ...string) (*model.SiteInput, error) {
-	number, err := helper.GetNumberFromPath(url.Path)
+	number, err := util.GetNumberFromPath(url.Path)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ func (s Disqus) getFromApi(apiKey string, threadID string) (model.Posts, error) 
 	cursor := "1%3A0%3A0"
 
 	var resp ListPostsThreaded
-	if err := helper.GetPageToJSON(fmt.Sprintf(
+	if err := util.GetPageToJSON(fmt.Sprintf(
 		"https://disqus.com/api/3.0/threads/listPostsThreaded?limit=%d&thread=%s&order=%s&cursor=%s&api_key=%s",
 		limit,
 		threadID,
