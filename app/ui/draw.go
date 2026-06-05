@@ -155,6 +155,9 @@ func (ui *ui) setContent(x, y int, ch rune, comb []rune, style tcell.Style) {
 
 func (ui *ui) drawAuthorLine(post model.Post, activePostID string, x int, y int) {
 	authorStartStyle := ui.style.AuthorStart
+	if post.Hidden {
+		authorStartStyle = tcell.StyleDefault.Foreground(color.Gray)
+	}
 	if post.ID == activePostID {
 		authorStartStyle = ui.style.ActiveMessage
 	}
