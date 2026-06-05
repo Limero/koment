@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 
 	"github.com/limero/koment/app"
@@ -19,7 +18,8 @@ func main() {
 
 	siteInput, err := lib.FindComments(args[1])
 	if err != nil {
-		log.Fatal(err)
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
 
 	app := app.NewApp()
@@ -28,11 +28,14 @@ func main() {
 	style := ui.DefaultStyle()
 	ui, err := ui.New(style)
 	if err != nil {
-		log.Fatal(err)
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
 	defer ui.Fini()
 
 	if err := app.RunApp(ui); err != nil {
-		log.Fatal(err)
+		ui.Fini()
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
 }
