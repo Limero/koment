@@ -160,16 +160,11 @@ func (ui *ui) navUpHalfPage(threads model.Threads, t, p int) (int, int) {
 
 func navUpPost(threads model.Threads, t, p int) (int, int) {
 	p--
-	if p < 0 {
-		if t > 0 {
-			t--
-			p = len(threads[t].Posts) - 1
-		} else {
-			p = 0
-		}
+	if p < 0 && t > 0 {
+		t--
+		p = len(threads[t].Posts) - 1
 	}
-
-	return t, p
+	return t, max(0, p)
 }
 
 func navDownPost(threads model.Threads, t, p int) (int, int) {
@@ -187,10 +182,7 @@ func navDownPost(threads model.Threads, t, p int) (int, int) {
 }
 
 func navUpThread(t int) (int, int) {
-	if t > 0 {
-		t--
-	}
-	return t, 0
+	return max(0, t-1), 0
 }
 
 func navDownThread(threads model.Threads, t int) (int, int) {
