@@ -15,6 +15,7 @@ type Post struct {
 	Depth   int
 	Author  Author
 	Message string
+	Hidden  bool
 
 	Upvotes   *int
 	Downvotes *int

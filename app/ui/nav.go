@@ -28,6 +28,8 @@ func (ui *ui) HandleViewerInput(threads model.Threads, t, p int) (string, int, i
 				t, p = navTop()
 			case "G":
 				t, p = navBottom(threads)
+			case "h":
+				return "hide-post", t, p
 			case "n":
 				return "search-next", t, p
 			case "N":
@@ -109,8 +111,15 @@ func (ui *ui) PauseUntilInput() {
 	}
 }
 
-func (ui *ui) countPostLines(post model.Post) int {
+func (ui *ui) countPostLines(thread model.Thread, p int) int {
+	post := thread.Posts[p]
 	if post.Stub != nil {
+		return 1
+	}
+	if hasHiddenParent(thread, p) {
+		return 0
+	}
+	if post.Hidden {
 		return 1
 	}
 	return 1 + len(util.TextToLines(post.Message, ui.style.MessageLength))
@@ -131,7 +140,7 @@ func (ui *ui) navDownHalfPage(threads model.Threads, t, p int) (int, int) {
 		} else {
 			break
 		}
-		lines += ui.countPostLines(threads[t].Posts[p])
+		lines += ui.countPostLines(threads[t], p)
 	}
 
 	return t, p
@@ -152,10 +161,20 @@ func (ui *ui) navUpHalfPage(threads model.Threads, t, p int) (int, int) {
 		} else {
 			break
 		}
-		lines += ui.countPostLines(threads[t].Posts[p])
+		lines += ui.countPostLines(threads[t], p)
 	}
 
 	return t, p
+}
+
+func hasHiddenParent(thread model.Thread, p int) bool {
+	depth := thread.Posts[p].Depth
+	for i := 0; i < p; i++ {
+		if thread.Posts[i].Hidden && thread.Posts[i].Depth < depth {
+			return true
+		}
+	}
+	return false
 }
 
 func navUpPost(threads model.Threads, t, p int) (int, int) {
@@ -163,6 +182,15 @@ func navUpPost(threads model.Threads, t, p int) (int, int) {
 	if p < 0 && t > 0 {
 		t--
 		p = len(threads[t].Posts) - 1
+	}
+	for p >= 0 && hasHiddenParent(threads[t], p) {
+		p--
+		if p < 0 && t > 0 {
+			t--
+			p = len(threads[t].Posts) - 1
+		} else if p < 0 {
+			break
+		}
 	}
 	return t, max(0, p)
 }
@@ -175,6 +203,17 @@ func navDownPost(threads model.Threads, t, p int) (int, int) {
 			p = 0
 		} else {
 			p--
+		}
+	}
+	for hasHiddenParent(threads[t], p) {
+		p++
+		if p >= len(threads[t].Posts) {
+			if t < len(threads)-1 {
+				t++
+				p = 0
+			} else {
+				break
+			}
 		}
 	}
 

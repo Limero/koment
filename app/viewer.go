@@ -26,10 +26,18 @@ func (a *App) ViewerMode(ui ui.UI) {
 	case "search-prev":
 		a.SearchPrev()
 	case "enter":
-		if a.threads[a.activeThread].Posts[a.activePost].Stub != nil {
+		post := &a.threads[a.activeThread].Posts[a.activePost]
+		if post.Hidden {
+			post.Hidden = false
+		} else if post.Stub != nil {
 			go func() {
 				a.ContinueStub(ui)
 			}()
+		}
+	case "hide-post":
+		post := &a.threads[a.activeThread].Posts[a.activePost]
+		if post.Stub == nil {
+			post.Hidden = !post.Hidden
 		}
 	case "quit":
 		a.run = false
