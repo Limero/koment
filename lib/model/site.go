@@ -46,6 +46,7 @@ type SiteInput struct {
 	FullUrl      *url.URL
 	ContinueFrom *ContinueFrom
 	ApiKey       string
+	OnPost       func(posts Posts)
 }
 
 type ContinueFrom struct {

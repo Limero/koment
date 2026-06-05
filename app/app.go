@@ -14,15 +14,17 @@ type App struct {
 	Site      model.Site
 	SiteInput model.SiteInput
 
-	threads      model.Threads
-	search       Search
-	activeThread int
-	activePost   int
-	mode         Mode
-	command      string
-	infoMsg      string
-	infoLevel    info.InfoLevel
-	run          bool
+	threads          model.Threads
+	search           Search
+	activeThread     int
+	activePost       int
+	mode             Mode
+	command          string
+	infoMsg          string
+	infoLevel        info.InfoLevel
+	run              bool
+	loadingMsg       string
+	accumulatedPosts model.Posts
 }
 
 func NewApp() App {
@@ -36,17 +38,34 @@ func NewApp() App {
 func (a *App) RunApp(ui ui.UI) error {
 	a.Site = lib.NewSite(a.SiteInput.SiteName)
 
-	ui.DrawLoading(fmt.Sprintf("Loading comments from %s...", a.SiteInput.SiteName))
+	a.SiteInput.OnPost = func(posts model.Posts) {
+		a.accumulatedPosts = append(a.accumulatedPosts, posts...)
+		a.threads = append(a.threads, model.Thread{Posts: posts})
+		ui.Refresh()
+	}
+
+	a.loadingMsg = fmt.Sprintf("Loading comments from %s...", a.SiteInput.SiteName)
+	ui.DrawLoading(a.loadingMsg)
 
 	go func() {
 		posts, err := a.Site.Fetch(a.SiteInput)
+		a.loadingMsg = ""
+
 		if err != nil {
 			a.Fatal(err.Error())
-		} else if len(posts) == 0 {
-			a.Terminate("No comments available")
+			ui.Refresh()
+			return
 		}
 
-		a.threads = model.PostsToThreads(posts)
+		if len(a.accumulatedPosts) > 0 {
+			// Already populated incrementally via OnPost (ycombinator)
+		} else {
+			a.threads = model.PostsToThreads(posts)
+			if len(posts) == 0 {
+				a.Terminate("No comments available")
+			}
+		}
+
 		ui.Refresh()
 	}()
 
@@ -57,6 +76,8 @@ func (a *App) RunApp(ui ui.UI) error {
 				a.activeThread,
 				a.activePost,
 			)
+		} else if a.loadingMsg != "" {
+			ui.DrawLoading(a.loadingMsg)
 		}
 
 		if a.infoMsg != "" {

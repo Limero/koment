@@ -25,6 +25,22 @@ type Post struct {
 	URL         string `json:"url"`
 }
 
+func (from Post) toModelBatch(depth int) model.Posts {
+	post, _ := from.toModel(depth)
+	posts := model.Posts{post}
+	for _, kid := range from.Kids {
+		posts = append(posts, model.Post{
+			ID:    uuid.NewString(),
+			Depth: depth + 1,
+			Stub: &model.Stub{
+				Count: 1,
+				Key:   strconv.Itoa(kid),
+			},
+		})
+	}
+	return posts
+}
+
 func (from Post) toModel(depth int) (model.Post, error) {
 	createdAt := time.Unix(from.Time, 0)
 

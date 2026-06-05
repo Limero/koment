@@ -24,14 +24,15 @@ func (s Ycombinator) GetInput(url *url.URL, _ ...string) (*model.SiteInput, erro
 }
 
 func (s Ycombinator) Fetch(fi model.SiteInput) (model.Posts, error) {
-	return s.getFromApi(fi.ID, fi.ContinueFrom)
+	return s.getFromApi(fi)
 }
 
-func (s Ycombinator) getFromApi(id string, continueFrom *model.ContinueFrom) (model.Posts, error) {
+func (s Ycombinator) getFromApi(fi model.SiteInput) (model.Posts, error) {
+	id := fi.ID
 	depth := 0
-	if continueFrom != nil {
-		id = continueFrom.Key
-		depth = continueFrom.Depth
+	if fi.ContinueFrom != nil {
+		id = fi.ContinueFrom.Key
+		depth = fi.ContinueFrom.Depth
 	}
 
 	url := "https://hacker-news.firebaseio.com/v0/item/%s.json"
@@ -40,7 +41,7 @@ func (s Ycombinator) getFromApi(id string, continueFrom *model.ContinueFrom) (mo
 		return nil, err
 	}
 
-	var posts Posts
+	var posts model.Posts
 	switch resp.Type {
 	case "story":
 		for _, kid := range resp.Kids {
@@ -49,11 +50,16 @@ func (s Ycombinator) getFromApi(id string, continueFrom *model.ContinueFrom) (mo
 				return nil, err
 			}
 
-			posts = append(posts, newResp)
+			batch := newResp.toModelBatch(depth)
+			posts = append(posts, batch...)
+
+			if fi.OnPost != nil {
+				fi.OnPost(batch)
+			}
 		}
 	case "comment":
-		posts = append(posts, resp)
+		posts = append(posts, resp.toModelBatch(depth)...)
 	}
 
-	return posts.toModel(depth)
+	return posts, nil
 }

@@ -11,6 +11,9 @@ func (a *App) SetViewerMode() {
 }
 
 func (a *App) ViewerMode(ui ui.UI) {
+	if len(a.threads) == 0 {
+		return
+	}
 	var action string
 	action, a.activeThread, a.activePost = ui.HandleViewerInput(a.threads, a.activeThread, a.activePost)
 	switch action {
