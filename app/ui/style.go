@@ -1,6 +1,9 @@
 package ui
 
-import "github.com/gdamore/tcell/v3"
+import (
+	"github.com/gdamore/tcell/v3"
+	"github.com/gdamore/tcell/v3/color"
+)
 
 type Style struct {
 	MessageLength int
@@ -52,23 +55,23 @@ func DefaultStyle() Style {
 		FullIndent:    4,
 		SemiIndent:    2,
 
-		AuthorName:    d.Foreground(tcell.ColorBlue),
-		UpVotesIcon:   d.Foreground(tcell.ColorGray),
-		UpVotesNum:    d.Foreground(tcell.ColorGray),
-		DownVotesIcon: d.Foreground(tcell.ColorGray),
-		DownVotesNum:  d.Foreground(tcell.ColorGray),
-		Time:          d.Foreground(tcell.ColorGray),
-		Separator:     d.Foreground(tcell.ColorGray),
+		AuthorName:    d.Foreground(color.Blue),
+		UpVotesIcon:   d.Foreground(color.Gray),
+		UpVotesNum:    d.Foreground(color.Gray),
+		DownVotesIcon: d.Foreground(color.Gray),
+		DownVotesNum:  d.Foreground(color.Gray),
+		Time:          d.Foreground(color.Gray),
+		Separator:     d.Foreground(color.Gray),
 
 		AuthorStartChar: '▎',
 		UpVotesChar:     tcell.RuneUArrow,
 		DownVotesChar:   tcell.RuneDArrow,
 		SeparatorChar:   tcell.RuneBullet,
 
-		ActiveMessage:     d.Foreground(tcell.ColorOrange),
+		ActiveMessage:     d.Foreground(color.Orange),
 		RegularMessage:    d,
-		StubMessage:       d.Foreground(tcell.ColorGray),
-		ActiveStubMessage: d.Foreground(tcell.ColorOrange),
+		StubMessage:       d.Foreground(color.Gray),
+		ActiveStubMessage: d.Foreground(color.Orange),
 
 		ActiveMessageChar: tcell.RuneVLine,
 		StubStartChar:     '▎',
@@ -77,8 +80,8 @@ func DefaultStyle() Style {
 
 		LoadingMessage: d,
 		InfoMessage:    d,
-		ErrorMessage:   d.Background(tcell.ColorRed),
+		ErrorMessage:   d.Background(color.Red),
 
-		Progress: d.Foreground(tcell.ColorGray),
+		Progress: d.Foreground(color.Gray),
 	}
 }

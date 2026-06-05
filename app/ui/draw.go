@@ -2,14 +2,55 @@ package ui
 
 import (
 	"fmt"
+	"hash/fnv"
 	"strconv"
 	"time"
 
 	"github.com/gdamore/tcell/v3"
+	"github.com/gdamore/tcell/v3/color"
 	"github.com/limero/koment/app/info"
 	"github.com/limero/koment/app/util"
 	"github.com/limero/koment/lib/model"
 )
+
+var authorPalette = []tcell.Color{
+	color.Orange,
+	color.Violet,
+	color.Brown,
+	color.Indigo,
+	color.Coral,
+	color.Crimson,
+	color.DarkCyan,
+	color.DarkOrange,
+	color.DarkOrchid,
+	color.DarkSeaGreen,
+	color.DeepPink,
+	color.DodgerBlue,
+	color.ForestGreen,
+	color.Goldenrod,
+	color.HotPink,
+	color.IndianRed,
+	color.MediumPurple,
+	color.RebeccaPurple,
+	color.RoyalBlue,
+	color.SeaGreen,
+	color.SlateBlue,
+	color.SteelBlue,
+	color.Tomato,
+	color.Turquoise,
+	color.YellowGreen,
+}
+
+func (ui *ui) colorForAuthor(name string) tcell.Color {
+	if c, ok := ui.authorColors[name]; ok {
+		return c
+	}
+	h := fnv.New32a()
+	h.Write([]byte(name))
+	c := authorPalette[h.Sum32()%uint32(len(authorPalette))]
+	ui.authorColors[name] = c
+	return c
+}
 
 func (ui *ui) DrawLoading(msg string) {
 	ui.screen.Clear()
@@ -98,8 +139,9 @@ func (ui *ui) setContent(x, y int, ch rune, comb []rune, style tcell.Style) {
 func (ui *ui) drawAuthorLine(post model.Post, x int, y int) {
 	ui.setContent(x, y, ui.style.AuthorStartChar, nil, ui.style.AuthorStart)
 	x++
+	authorColor := ui.colorForAuthor(post.Author.Name)
 	for _, c := range post.Author.Name {
-		ui.setContent(x, y, c, nil, ui.style.AuthorName)
+		ui.setContent(x, y, c, nil, tcell.StyleDefault.Foreground(authorColor))
 		x++
 	}
 	if post.Upvotes != nil || post.Downvotes != nil {

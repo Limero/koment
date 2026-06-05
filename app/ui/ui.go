@@ -28,6 +28,8 @@ type ui struct {
 
 	shouldCenter bool
 	scrollY      int
+
+	authorColors map[string]tcell.Color
 }
 
 func New(style Style) (*ui, error) {
@@ -43,8 +45,9 @@ func New(style Style) (*ui, error) {
 	}
 
 	return &ui{
-		screen: screen,
-		style:  style,
+		screen:       screen,
+		style:        style,
+		authorColors: make(map[string]tcell.Color),
 	}, nil
 }
 

@@ -15,12 +15,14 @@ func TestFetch(t *testing.T) {
 }
 
 func TestInstances(t *testing.T) {
+	t.Parallel()
 	if os.Getenv("TEST_EXTERNAL") == "" {
 		t.Skip("Not testing external")
 	}
 
 	for _, instance := range defaultInstances {
 		t.Run(instance, func(t *testing.T) {
+			t.Parallel()
 			var resp CommentsResponse
 			err := util.GetPageToJSON(fmt.Sprintf(
 				"%s/api/v1/comments/dQw4w9WgXcQ/",
