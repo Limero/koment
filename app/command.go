@@ -15,7 +15,7 @@ func (a *App) CommandMode(ui ui.UI) {
 	action, char := ui.HandleCommandInput()
 	switch action {
 	case "command-add":
-		a.command += string(char)
+		a.command += char
 	case "command-rm":
 		if len(a.command) > 0 {
 			a.command = a.command[:len(a.command)-1]

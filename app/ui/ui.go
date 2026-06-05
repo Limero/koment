@@ -3,8 +3,7 @@ package ui
 import (
 	"fmt"
 
-	"github.com/gdamore/tcell/v2"
-	"github.com/gdamore/tcell/v2/views"
+	"github.com/gdamore/tcell/v3"
 	"github.com/limero/koment/app/info"
 	"github.com/limero/koment/lib/model"
 )
@@ -19,16 +18,16 @@ type UI interface {
 
 	// Nav
 	HandleViewerInput(threads model.Threads, t, p int) (string, int, int)
-	HandleCommandInput() (string, rune)
+	HandleCommandInput() (string, string)
 	PauseUntilInput()
 }
 
 type ui struct {
 	screen tcell.Screen
-	view   *views.ViewPort
 	style  Style
 
 	shouldCenter bool
+	scrollY      int
 }
 
 func New(style Style) (*ui, error) {
@@ -46,7 +45,6 @@ func New(style Style) (*ui, error) {
 	return &ui{
 		screen: screen,
 		style:  style,
-		view:   views.NewViewPort(screen, 0, 0, -1, -1),
 	}, nil
 }
 

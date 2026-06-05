@@ -1,39 +1,39 @@
 package ui
 
 import (
-	"github.com/gdamore/tcell/v2"
+	"github.com/gdamore/tcell/v3"
 	"github.com/limero/koment/lib/model"
 )
 
 func (ui *ui) HandleViewerInput(threads model.Threads, t, p int) (string, int, int) {
-	ev := ui.screen.PollEvent()
+	ev := <-ui.screen.EventQ()
 	switch ev := ev.(type) {
 	case *tcell.EventKey:
 		ui.Refresh()
 		switch ev.Key() {
 		case tcell.KeyRune:
-			switch ev.Rune() {
-			case 'q', 'Q':
+			switch ev.Str() {
+			case "q", "Q":
 				return "quit", t, p
-			case 'j':
+			case "j":
 				t, p = navDownPost(threads, t, p)
-			case 'J':
+			case "J":
 				t, p = navDownThread(threads, t)
-			case 'k':
+			case "k":
 				t, p = navUpPost(threads, t, p)
-			case 'K':
+			case "K":
 				t, p = navUpThread(t)
-			case 'g':
+			case "g":
 				t, p = navTop()
-			case 'G':
+			case "G":
 				t, p = navBottom(threads)
-			case 'n':
+			case "n":
 				return "search-next", t, p
-			case 'N':
+			case "N":
 				return "search-prev", t, p
-			case ':':
+			case ":":
 				return "command", t, p
-			case '/':
+			case "/":
 				return "search", t, p
 			}
 		case tcell.KeyCtrlL:
@@ -70,33 +70,33 @@ func (ui *ui) HandleViewerInput(threads model.Threads, t, p int) (string, int, i
 	return "", t, p
 }
 
-func (ui *ui) HandleCommandInput() (string, rune) {
-	ev := ui.screen.PollEvent()
+func (ui *ui) HandleCommandInput() (string, string) {
+	ev := <-ui.screen.EventQ()
 	switch ev := ev.(type) {
 	case *tcell.EventKey:
 		ui.Refresh()
 		switch ev.Key() {
 		case tcell.KeyRune:
-			return "command-add", ev.Rune()
-		case tcell.KeyBackspace2:
-			return "command-rm", 0
+			return "command-add", ev.Str()
+		case tcell.KeyBackspace:
+			return "command-rm", ""
 		case tcell.KeyEnter:
-			return "command-exec", 0
+			return "command-exec", ""
 		case tcell.KeyESC:
-			return "exit", 0
+			return "exit", ""
 		case tcell.KeyCtrlC:
-			return "quit", 0
+			return "quit", ""
 		}
 	case *tcell.EventResize:
 		ui.screen.Sync()
 	}
 
-	return "", 0
+	return "", ""
 }
 
 func (ui *ui) PauseUntilInput() {
 	for {
-		ev := ui.screen.PollEvent()
+		ev := <-ui.screen.EventQ()
 		switch ev.(type) {
 		case *tcell.EventKey:
 			return

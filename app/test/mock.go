@@ -44,7 +44,7 @@ func (ui *MockUI) HandleViewerInput(threads model.Threads, t, p int) (string, in
 	return "", 0, 0
 }
 
-func (ui *MockUI) HandleCommandInput() (string, rune) {
-	return "", rune(0)
+func (ui *MockUI) HandleCommandInput() (string, string) {
+	return "", ""
 }
 func (ui *MockUI) PauseUntilInput() {}
