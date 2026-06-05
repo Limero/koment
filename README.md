@@ -12,7 +12,7 @@ go install github.com/limero/koment@latest
 
 ```
 koment <url>
-or
+koment --plain <url>   # print output and exit (no TUI)
 koment demo
 ```
 

@@ -10,31 +10,53 @@ import (
 )
 
 func main() {
-	args := os.Args
-	if len(args) < 2 {
-		fmt.Println("Usage: koment <url>")
+	args := os.Args[1:]
+
+	plain := false
+	urlArg := ""
+
+	for _, arg := range args {
+		switch arg {
+		case "--plain", "-p":
+			plain = true
+		default:
+			urlArg = arg
+		}
+	}
+
+	if urlArg == "" {
+		fmt.Println("Usage: koment [--plain|-p] <url>")
+		os.Exit(1)
+	}
+
+	siteInput, err := lib.FindComments(urlArg)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+
+	a := app.NewApp()
+	a.SiteInput = *siteInput
+
+	if plain {
+		hu := ui.NewHeadless(ui.DefaultStyle())
+		if err := a.RunHeadless(hu); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
 		return
 	}
 
-	siteInput, err := lib.FindComments(args[1])
-	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
-
-	app := app.NewApp()
-	app.SiteInput = *siteInput
-
 	style := ui.DefaultStyle()
-	ui, err := ui.New(style)
+	tui, err := ui.New(style)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
-	defer ui.Fini()
+	defer tui.Fini()
 
-	if err := app.RunApp(ui); err != nil {
-		ui.Fini()
+	if err := a.RunApp(tui); err != nil {
+		tui.Fini()
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
