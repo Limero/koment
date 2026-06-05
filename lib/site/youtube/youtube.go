@@ -3,18 +3,35 @@ package youtube
 import (
 	"fmt"
 	"net/url"
+	"os"
 
 	"github.com/limero/koment/lib/internal/util"
 	"github.com/limero/koment/lib/model"
 )
 
+var defaultInstances = []string{
+	"https://inv.nadeko.net",
+	"https://yt.chocolatemoo53.com",
+}
+
+func getInstance() string {
+	if env := os.Getenv("INVIDIOUS_INSTANCE"); env != "" {
+		return env
+	}
+	return defaultInstances[0]
+}
+
 type Youtube struct {
-	invidiousInstance string
+	instances []string
 }
 
 func NewYoutube() Youtube {
+	instances := defaultInstances
+	if env := os.Getenv("INVIDIOUS_INSTANCE"); env != "" {
+		instances = []string{env}
+	}
 	return Youtube{
-		invidiousInstance: "https://invidious.snopyta.org",
+		instances: instances,
 	}
 }
 
@@ -38,15 +55,26 @@ func (s Youtube) getFromApi(videoID string, continueFrom *model.ContinueFrom) (m
 		depth = continueFrom.Depth
 	}
 
-	var resp CommentsResponse
-	if err := util.GetPageToJSON(fmt.Sprintf(
-		"%s/api/v1/comments/%s/?continuation=%s",
-		s.invidiousInstance,
-		videoID,
-		continueFromKey,
-	), &resp); err != nil {
-		return nil, err
+	var errs []error
+	for _, instance := range s.instances {
+		var resp CommentsResponse
+		err := util.GetPageToJSON(fmt.Sprintf(
+			"%s/api/v1/comments/%s/?continuation=%s",
+			instance,
+			videoID,
+			continueFromKey,
+		), &resp)
+		if err == nil {
+			return resp.toModel(depth)
+		}
+		errs = append(errs, fmt.Errorf("%s: %w", instance, err))
 	}
 
-	return resp.toModel(depth)
+	return nil, fmt.Errorf("all invidious instances failed:\n  %s", func() string {
+		var s string
+		for _, e := range errs {
+			s += fmt.Sprintf("  - %v\n", e)
+		}
+		return s
+	}())
 }
