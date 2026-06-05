@@ -40,6 +40,9 @@ type Style struct {
 	LoadingMessage tcell.Style
 	InfoMessage    tcell.Style
 	ErrorMessage   tcell.Style
+
+	// Progress
+	Progress tcell.Style
 }
 
 func DefaultStyle() Style {
@@ -75,5 +78,7 @@ func DefaultStyle() Style {
 		LoadingMessage: d,
 		InfoMessage:    d,
 		ErrorMessage:   d.Background(tcell.ColorRed),
+
+		Progress: d.Foreground(tcell.ColorGray),
 	}
 }

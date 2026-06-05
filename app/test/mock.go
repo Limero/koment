@@ -32,7 +32,7 @@ type MockUI struct{}
 
 func (ui *MockUI) DrawLoading(msg string) {}
 
-func (ui *MockUI) DrawViewer(threads model.Threads, activePostID string) {}
+func (ui *MockUI) DrawViewer(threads model.Threads, activeThread, activePost int) {}
 
 func (ui *MockUI) DrawCommandPrompt(command string) {}
 

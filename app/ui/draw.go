@@ -19,10 +19,11 @@ func (ui *ui) DrawLoading(msg string) {
 	ui.screen.Show()
 }
 
-func (ui *ui) DrawViewer(threads model.Threads, activePostID string) {
+func (ui *ui) DrawViewer(threads model.Threads, activeThread, activePost int) {
 	x, y := 0, 0
 	activeMsgLength := 0
 	activeMsgY := 0
+	activePostID := threads[activeThread].Posts[activePost].ID
 
 	ui.screen.Clear()
 	for _, thread := range threads {
@@ -66,7 +67,7 @@ func (ui *ui) DrawViewer(threads model.Threads, activePostID string) {
 		y++
 	}
 
-	_, screenH := ui.screen.Size()
+	screenW, screenH := ui.screen.Size()
 	if ui.shouldCenter {
 		ui.shouldCenter = false
 		ui.scrollY = (activeMsgY + activeMsgLength/2) - screenH/2
@@ -76,6 +77,16 @@ func (ui *ui) DrawViewer(threads model.Threads, activePostID string) {
 		return
 	}
 	ui.shouldCenter = true
+
+	totalPosts := threads.TotalPosts()
+	if totalPosts > 0 {
+		currentPos := threads.CurrentPostIndex(activeThread, activePost)
+		progressStr := fmt.Sprintf(" %d/%d ", currentPos, totalPosts)
+		px := screenW - len(progressStr)
+		for i, c := range progressStr {
+			ui.screen.SetContent(px+i, screenH-1, c, nil, ui.style.Progress)
+		}
+	}
 
 	ui.screen.Show()
 }

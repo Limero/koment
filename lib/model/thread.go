@@ -57,3 +57,19 @@ func (threads Threads) FindPost(postID string) (int, int) {
 	}
 	return 0, 0
 }
+
+func (threads Threads) TotalPosts() int {
+	total := 0
+	for _, t := range threads {
+		total += len(t.Posts)
+	}
+	return total
+}
+
+func (threads Threads) CurrentPostIndex(activeThread, activePost int) int {
+	index := 0
+	for t := 0; t < activeThread; t++ {
+		index += len(threads[t].Posts)
+	}
+	return index + activePost + 1 // 1-indexed
+}

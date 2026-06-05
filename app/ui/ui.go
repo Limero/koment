@@ -11,7 +11,7 @@ import (
 type UI interface {
 	// Draw
 	DrawLoading(msg string)
-	DrawViewer(threads model.Threads, activePostID string)
+	DrawViewer(threads model.Threads, activeThread, activePost int)
 	DrawCommandPrompt(command string)
 	DrawInfo(infoLevel info.InfoLevel, msg string)
 	Refresh()

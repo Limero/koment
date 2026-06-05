@@ -54,7 +54,8 @@ func (a *App) RunApp(ui ui.UI) error {
 		if len(a.threads) > 0 {
 			ui.DrawViewer(
 				a.threads,
-				a.threads[a.activeThread].Posts[a.activePost].ID,
+				a.activeThread,
+				a.activePost,
 			)
 		}
 
