@@ -2,7 +2,6 @@ package disqus
 
 import (
 	"os"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -14,7 +13,7 @@ func TestFetch(t *testing.T) {
 }
 
 func TestGetThreadIDFromEmbedPage(t *testing.T) {
-	if strings.ToLower(os.Getenv("TEST_EXTERNAL")) != "true" {
+	if os.Getenv("TEST_EXTERNAL") == "" {
 		t.Skip("Not testing external")
 	}
 

@@ -3,7 +3,6 @@ package youtube
 import (
 	"fmt"
 	"os"
-	"strings"
 	"testing"
 
 	"github.com/limero/koment/lib/internal/util"
@@ -16,7 +15,7 @@ func TestFetch(t *testing.T) {
 }
 
 func TestInstances(t *testing.T) {
-	if strings.ToLower(os.Getenv("TEST_EXTERNAL")) != "true" {
+	if os.Getenv("TEST_EXTERNAL") == "" {
 		t.Skip("Not testing external")
 	}
 

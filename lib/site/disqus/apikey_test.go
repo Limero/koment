@@ -2,7 +2,6 @@ package disqus
 
 import (
 	"os"
-	"strings"
 	"testing"
 
 	"github.com/limero/koment/lib/internal/util"
@@ -23,7 +22,7 @@ func Test_getApiKey(t *testing.T) {
 	})
 
 	t.Run("fetch api key", func(t *testing.T) {
-		if strings.ToLower(os.Getenv("TEST_EXTERNAL")) != "true" {
+		if os.Getenv("TEST_EXTERNAL") == "" {
 			t.Skip("Not testing external")
 		}
 		os.Remove(apiKeyFile)
