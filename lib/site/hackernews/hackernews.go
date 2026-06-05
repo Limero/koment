@@ -1,4 +1,4 @@
-package ycombinator
+package hackernews
 
 import (
 	"fmt"
@@ -9,25 +9,25 @@ import (
 	"github.com/limero/koment/lib/model"
 )
 
-type Ycombinator struct{}
+type HackerNews struct{}
 
-func NewYcombinator() Ycombinator {
-	return Ycombinator{}
+func NewHackerNews() HackerNews {
+	return HackerNews{}
 }
 
-func (s Ycombinator) GetInput(url *url.URL, _ ...string) (*model.SiteInput, error) {
+func (s HackerNews) GetInput(url *url.URL, _ ...string) (*model.SiteInput, error) {
 	queryValues := url.Query()
 	return &model.SiteInput{
-		SiteName: model.SiteYcombinator,
+		SiteName: model.SiteHackerNews,
 		ID:       queryValues.Get("id"),
 	}, nil
 }
 
-func (s Ycombinator) Fetch(fi model.SiteInput) (model.Posts, error) {
+func (s HackerNews) Fetch(fi model.SiteInput) (model.Posts, error) {
 	return s.getFromApi(fi)
 }
 
-func (s Ycombinator) getFromApi(fi model.SiteInput) (model.Posts, error) {
+func (s HackerNews) getFromApi(fi model.SiteInput) (model.Posts, error) {
 	id := fi.ID
 	depth := 0
 	if fi.ContinueFrom != nil {

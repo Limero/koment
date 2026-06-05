@@ -1,4 +1,4 @@
-package ycombinator
+package hackernews
 
 import (
 	"strconv"

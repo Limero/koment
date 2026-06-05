@@ -58,7 +58,7 @@ func (a *App) RunApp(ui ui.UI) error {
 		}
 
 		if len(a.accumulatedPosts) > 0 {
-			// Already populated incrementally via OnPost (ycombinator)
+			// Already populated incrementally via OnPost (hackernews)
 		} else {
 			a.threads = model.PostsToThreads(posts)
 			if len(posts) == 0 {

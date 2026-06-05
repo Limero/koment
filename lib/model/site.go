@@ -7,12 +7,12 @@ type SiteName string
 const (
 	SiteDemo SiteName = "demo"
 
-	SiteDisqus      SiteName = "disqus"
-	SiteReddit      SiteName = "reddit"
-	SiteVbulletin   SiteName = "vbulletin"
-	SiteWordPress   SiteName = "wordpress"
-	SiteYcombinator SiteName = "ycombinator" // Hacker News
-	SiteYoutube     SiteName = "youtube"
+	SiteDisqus     SiteName = "disqus"
+	SiteReddit     SiteName = "reddit"
+	SiteVbulletin  SiteName = "vbulletin"
+	SiteWordPress  SiteName = "wordpress"
+	SiteHackerNews SiteName = "hackernews"
+	SiteYoutube    SiteName = "youtube"
 )
 
 func AllSites() []SiteName {
@@ -22,7 +22,7 @@ func AllSites() []SiteName {
 		SiteReddit,
 		SiteVbulletin,
 		SiteWordPress,
-		SiteYcombinator,
+		SiteHackerNews,
 		SiteYoutube,
 	}
 }
