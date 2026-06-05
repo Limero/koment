@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/limero/koment/lib/internal/util"
 	"github.com/limero/koment/lib/model"
 )
 
@@ -27,13 +28,15 @@ type Post struct {
 func (from Post) toModel(depth int) (model.Post, error) {
 	createdAt := time.Unix(from.Time, 0)
 
+	message := util.CleanHTML(from.Text)
+
 	return model.Post{
 		ID:    strconv.Itoa(from.ID),
 		Depth: depth,
 		Author: model.Author{
 			Name: from.By,
 		},
-		Message: from.Text, // TODO: Cleanup HTML from it
+		Message: message,
 
 		Upvotes:   &from.Score,
 		CreatedAt: &createdAt,

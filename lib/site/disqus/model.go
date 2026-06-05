@@ -3,6 +3,7 @@ package disqus
 import (
 	"time"
 
+	"github.com/limero/koment/lib/internal/util"
 	"github.com/limero/koment/lib/model"
 )
 
@@ -137,7 +138,7 @@ func (from Post) toModel() (model.Post, error) {
 		Author: model.Author{
 			Name: from.Author.Name,
 		},
-		Message: from.RawMessage,
+		Message: util.CleanHTML(from.RawMessage),
 
 		Upvotes:   &from.Likes,
 		Downvotes: &from.Dislikes,

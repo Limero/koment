@@ -3,6 +3,8 @@ package util
 import (
 	"fmt"
 	"strings"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 func GetLastBetween(s, from, to string) (string, error) {
@@ -11,6 +13,13 @@ func GetLastBetween(s, from, to string) (string, error) {
 	}
 	f := strings.Split(s, from)
 	return strings.Split(f[len(f)-1], to)[0], nil
+}
+
+func CleanHTML(t string) string {
+	if doc, err := goquery.NewDocumentFromReader(strings.NewReader(t)); err == nil {
+		return CleanText(doc.Text())
+	}
+	return CleanText(t)
 }
 
 func CleanText(t string) string {
