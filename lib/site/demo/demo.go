@@ -9,8 +9,7 @@ import (
 	"github.com/limero/koment/lib/model"
 )
 
-type Demo struct {
-}
+type Demo struct{}
 
 func NewDemo() Demo {
 	return Demo{}

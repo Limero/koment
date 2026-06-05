@@ -14,13 +14,6 @@ var defaultInstances = []string{
 	"https://yt.chocolatemoo53.com",
 }
 
-func getInstance() string {
-	if env := os.Getenv("INVIDIOUS_INSTANCE"); env != "" {
-		return env
-	}
-	return defaultInstances[0]
-}
-
 type Youtube struct {
 	instances []string
 }
