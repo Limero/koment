@@ -17,14 +17,7 @@ func GetLastBetween(s, from, to string) (string, error) {
 
 func CleanHTML(t string) string {
 	if doc, err := goquery.NewDocumentFromReader(strings.NewReader(t)); err == nil {
-		return CleanText(doc.Text())
+		return doc.Text()
 	}
-	return CleanText(t)
-}
-
-func CleanText(t string) string {
-	t = strings.TrimLeft(t, "\n")
-	t = strings.TrimRight(t, "\n")
-	t = strings.TrimSpace(t)
 	return t
 }

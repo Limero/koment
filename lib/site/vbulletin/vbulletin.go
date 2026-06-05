@@ -97,7 +97,7 @@ func (s Vbulletin) getFromHttp(url *url.URL) (model.Posts, error) {
 			Author: model.Author{
 				Name: s.Find(".author a").Text(),
 			},
-			Message: util.CleanText(s.Find(".js-post__content-text").Text()),
+			Message: util.CleanHTML(s.Find(".js-post__content-text").Text()),
 
 			Upvotes:   &upvotes,
 			CreatedAt: &createdAt,
