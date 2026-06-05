@@ -26,69 +26,44 @@ func (s Disqus) GetInput(url *url.URL, v ...string) (*model.SiteInput, error) {
 	if len(v) == 0 {
 		return nil, errors.New("Disqus requires additional variables to decide input")
 	}
-	threadID, err := s.getThreadIDFromEmbedPage(v[0], number)
-	if err != nil {
-		return nil, err
-	}
-
-	apiKey, err := s.getApiKey()
-	if err != nil {
-		return nil, errors.Join(err, errors.New("failed to retrieve disqus api key"))
-	}
 
 	return &model.SiteInput{
 		SiteName: model.SiteDisqus,
-		ID:       threadID,
-		ApiKey:   apiKey,
+		ID:       number,
+		Category: v[0],
 	}, nil
 }
 
 func (s Disqus) Fetch(fi model.SiteInput) (model.Posts, error) {
-	return s.getFromApi(fi.ApiKey, fi.ID)
-}
-
-func (s Disqus) getFromApi(apiKey string, threadID string) (model.Posts, error) {
-	limit := 100
-	order := "popular"
-	cursor := "1%3A0%3A0"
-
-	var resp ListPostsThreaded
-	if err := util.GetPageToJSON(fmt.Sprintf(
-		"https://disqus.com/api/3.0/threads/listPostsThreaded?limit=%d&thread=%s&order=%s&cursor=%s&api_key=%s",
-		limit,
-		threadID,
-		order,
-		cursor,
-		apiKey,
-	), &resp); err != nil {
+	embed, err := s.fetchEmbedPage(fi.Category, fi.ID)
+	if err != nil {
 		return nil, err
 	}
-
-	return resp.toModel()
+	return embed.toModel()
 }
 
-func (s Disqus) getThreadIDFromEmbedPage(name string, number string) (string, error) {
+func (s Disqus) fetchEmbedPage(name string, number string) (EmbedPage, error) {
 	if name == "" || number == "" {
-		return "", fmt.Errorf("either name (%s) or number (%s) is empty", name, number)
+		return EmbedPage{}, fmt.Errorf("either name (%s) or number (%s) is empty", name, number)
 	}
-	url := "https://disqus.com/embed/comments/?f=" + name + "&t_i=" + number + "#version=93621f724643ecd0f307feb8123718cb"
+	url := "https://disqus.com/embed/comments/?f=" + name + "&t_i=" + number
 
 	res, err := http.Get(url)
 	if err != nil {
-		return "", err
+		return EmbedPage{}, err
 	}
 	defer res.Body.Close()
 
 	doc, err := goquery.NewDocumentFromReader(res.Body)
 	if err != nil {
-		return "", err
+		return EmbedPage{}, err
 	}
 
 	var data EmbedPage
 
 	jsonData := doc.Find("script#disqus-threadData").First().Text()
 	if err = json.Unmarshal([]byte(jsonData), &data); err != nil {
-		return "", err
+		return EmbedPage{}, err
 	}
-	return data.Response.Thread.ID, nil
+	return data, nil
 }

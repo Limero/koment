@@ -110,12 +110,6 @@ type Cursor struct {
 	More    bool   `json:"more"`
 }
 
-type ListPostsThreaded struct {
-	Cursor   Cursor `json:"cursor"`
-	Code     int    `json:"code"`
-	Response []Post `json:"response"`
-}
-
 type EmbedPage struct {
 	Cursor   Cursor `json:"cursor"`
 	Code     int    `json:"code"`
@@ -146,10 +140,10 @@ func (from Post) toModel() (model.Post, error) {
 	}, nil
 }
 
-func (from ListPostsThreaded) toModel() (model.Posts, error) {
+func (from EmbedPage) toModel() (model.Posts, error) {
 	var err error
-	posts := make(model.Posts, len(from.Response))
-	for i, p := range from.Response {
+	posts := make(model.Posts, len(from.Response.Posts))
+	for i, p := range from.Response.Posts {
 		posts[i], err = p.toModel()
 		if err != nil {
 			return nil, err

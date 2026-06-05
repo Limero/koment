@@ -8,34 +8,40 @@ import (
 )
 
 func TestToModel(t *testing.T) {
-	listPosts := ListPostsThreaded{
-		Response: []Post{
-			{
-				Dislikes:  321,
-				Likes:     123,
-				ID:        "1",
-				CreatedAt: "2023-04-21T13:37:00",
-				Author: Author{
-					Name: "author",
+	embed := EmbedPage{
+		Response: struct {
+			LastModified int    `json:"lastModified"`
+			Posts        []Post `json:"posts"`
+			Thread       Thread `json:"thread"`
+		}{
+			Posts: []Post{
+				{
+					Dislikes:  321,
+					Likes:     123,
+					ID:        "1",
+					CreatedAt: "2023-04-21T13:37:00",
+					Author: Author{
+						Name: "author",
+					},
+					RawMessage: "body",
+					Depth:      0,
 				},
-				RawMessage: "body",
-				Depth:      0,
-			},
-			{
-				ID:         "2",
-				CreatedAt:  "2023-04-21T13:37:00",
-				RawMessage: "replybody",
-				Depth:      1,
+				{
+					ID:         "2",
+					CreatedAt:  "2023-04-21T13:37:00",
+					RawMessage: "replybody",
+					Depth:      1,
+				},
 			},
 		},
 	}
 
-	posts, err := listPosts.toModel()
+	posts, err := embed.toModel()
 	require.NoError(t, err)
 	assert.Len(t, posts, 2)
 
 	t.Run("Check post", func(t *testing.T) {
-		expected := listPosts.Response[0]
+		expected := embed.Response.Posts[0]
 		actual := posts[0]
 		assert.Equal(t, expected.ID, actual.ID)
 		assert.Equal(t, expected.RawMessage, actual.Message)
@@ -47,7 +53,7 @@ func TestToModel(t *testing.T) {
 	})
 
 	t.Run("Check reply", func(t *testing.T) {
-		expected := listPosts.Response[1]
+		expected := embed.Response.Posts[1]
 		actual := posts[1]
 		assert.Equal(t, expected.ID, actual.ID)
 		assert.Equal(t, expected.RawMessage, actual.Message)

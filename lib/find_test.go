@@ -21,17 +21,15 @@ func TestFindComments(t *testing.T) {
 				SiteName: model.SiteDemo,
 			},
 		},
-		// TODO: Mock Disqus
-		/*
-			{
-				name: "feber",
-				url:  "https://feber.se/abc/def/123456/",
-				expected: &model.SiteInput{
-					SiteName: model.SiteDisqus,
-					ID:   "abc",
-				},
+		{
+			name: "feber",
+			url:  "https://feber.se/abc/def/123456/",
+			expected: &model.SiteInput{
+				SiteName: model.SiteDisqus,
+				ID:       "123456",
+				Category: "feber",
 			},
-		*/
+		},
 		{
 			name: "reddit",
 			url:  "https://reddit.com/r/subreddit/comments/12dx0b0/abc/",
