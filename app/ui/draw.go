@@ -82,7 +82,7 @@ func (ui *ui) DrawViewer(threads model.Threads, activeThread, activePost int) {
 			}
 
 			// Author line
-			ui.drawAuthorLine(post, x, y)
+			ui.drawAuthorLine(post, activePostID, x, y)
 			y++
 
 			// Main message
@@ -136,8 +136,12 @@ func (ui *ui) setContent(x, y int, ch rune, comb []rune, style tcell.Style) {
 	ui.screen.SetContent(x, y-ui.scrollY, ch, comb, style)
 }
 
-func (ui *ui) drawAuthorLine(post model.Post, x int, y int) {
-	ui.setContent(x, y, ui.style.AuthorStartChar, nil, ui.style.AuthorStart)
+func (ui *ui) drawAuthorLine(post model.Post, activePostID string, x int, y int) {
+	authorStartStyle := ui.style.AuthorStart
+	if post.ID == activePostID {
+		authorStartStyle = ui.style.ActiveMessage
+	}
+	ui.setContent(x, y, ui.style.AuthorStartChar, nil, authorStartStyle)
 	x++
 	authorColor := ui.colorForAuthor(post.Author.Name)
 	for _, c := range post.Author.Name {
