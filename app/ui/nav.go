@@ -2,6 +2,7 @@ package ui
 
 import (
 	"github.com/gdamore/tcell/v3"
+	"github.com/limero/koment/app/util"
 	"github.com/limero/koment/lib/model"
 )
 
@@ -40,6 +41,10 @@ func (ui *ui) HandleViewerInput(threads model.Threads, t, p int) (string, int, i
 			ui.screen.Sync()
 		case tcell.KeyCtrlC:
 			return "quit", t, p
+		case tcell.KeyCtrlD:
+			t, p = ui.navDownHalfPage(threads, t, p)
+		case tcell.KeyCtrlU:
+			t, p = ui.navUpHalfPage(threads, t, p)
 		case tcell.KeyUp:
 			if ev.Modifiers() == tcell.ModShift {
 				t, p = navUpThread(t)
@@ -102,6 +107,55 @@ func (ui *ui) PauseUntilInput() {
 			return
 		}
 	}
+}
+
+func (ui *ui) countPostLines(post model.Post) int {
+	if post.Stub != nil {
+		return 1
+	}
+	return 1 + len(util.TextToLines(post.Message, ui.style.MessageLength))
+}
+
+func (ui *ui) navDownHalfPage(threads model.Threads, t, p int) (int, int) {
+	_, screenH := ui.screen.Size()
+	targetLines := max(1, screenH/2)
+	lines := 0
+
+	for lines < targetLines {
+		if p+1 < len(threads[t].Posts) {
+			p++
+		} else if t+1 < len(threads) {
+			t++
+			p = 0
+			lines++ // blank line between threads
+		} else {
+			break
+		}
+		lines += ui.countPostLines(threads[t].Posts[p])
+	}
+
+	return t, p
+}
+
+func (ui *ui) navUpHalfPage(threads model.Threads, t, p int) (int, int) {
+	_, screenH := ui.screen.Size()
+	targetLines := max(1, screenH/2)
+	lines := 0
+
+	for lines < targetLines {
+		if p > 0 {
+			p--
+		} else if t > 0 {
+			t--
+			p = len(threads[t].Posts) - 1
+			lines++ // blank line between threads
+		} else {
+			break
+		}
+		lines += ui.countPostLines(threads[t].Posts[p])
+	}
+
+	return t, p
 }
 
 func navUpPost(threads model.Threads, t, p int) (int, int) {
