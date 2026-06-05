@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/limero/koment/lib/internal/util"
 	"github.com/limero/koment/lib/model"
 )
@@ -19,30 +20,31 @@ func (s Reddit) GetInput(url *url.URL, _ ...string) (*model.SiteInput, error) {
 	if !strings.Contains(url.Path, "/comments/") {
 		return nil, fmt.Errorf("invalid path %q", url.Path)
 	}
+
+	fullUrl, _ := url.Parse(fmt.Sprintf("https://old.reddit.com%s", url.Path))
+
 	return &model.SiteInput{
 		SiteName: model.SiteReddit,
+		FullUrl:  fullUrl,
 		Category: strings.Split(strings.Split(url.Path, "/r/")[1], "/")[0],
 		ID:       strings.Split(strings.Split(url.Path, "/comments/")[1], "/")[0],
 	}, nil
 }
 
 func (s Reddit) Fetch(fi model.SiteInput) (model.Posts, error) {
-	return s.getFromApi(fi.Category, fi.ID)
+	return getFromHTML(fi.FullUrl)
 }
 
-func (s Reddit) getFromApi(subReddit string, threadID string) (model.Posts, error) {
-	var resp Listings
-	if err := util.GetPageToJSON(fmt.Sprintf(
-		"https://reddit.com/r/%s/comments/%s.json",
-		subReddit,
-		threadID,
-	), &resp); err != nil {
+func getFromHTML(url *url.URL) (model.Posts, error) {
+	body, err := util.GetPageBodyString(url.String())
+	if err != nil {
 		return nil, err
 	}
 
-	if len(resp) == 0 {
-		return nil, fmt.Errorf("no posts found, probably rate limited")
+	doc, err := goquery.NewDocumentFromReader(strings.NewReader(body))
+	if err != nil {
+		return nil, err
 	}
 
-	return resp.toModel()
+	return parseComments(doc)
 }

@@ -1,12 +1,18 @@
 package lib
 
 import (
+	"net/url"
 	"testing"
 
 	"github.com/limero/koment/lib/model"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
+
+func mustURL(s string) *url.URL {
+	u, _ := url.Parse(s)
+	return u
+}
 
 func TestFindComments(t *testing.T) {
 	for _, tt := range []struct {
@@ -37,6 +43,7 @@ func TestFindComments(t *testing.T) {
 				SiteName: model.SiteReddit,
 				Category: "subreddit",
 				ID:       "12dx0b0",
+				FullUrl:  mustURL("https://old.reddit.com/r/subreddit/comments/12dx0b0/abc/"),
 			},
 		},
 		{
