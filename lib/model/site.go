@@ -10,6 +10,7 @@ const (
 	SiteDisqus      SiteName = "disqus"
 	SiteReddit      SiteName = "reddit"
 	SiteVbulletin   SiteName = "vbulletin"
+	SiteWordPress   SiteName = "wordpress"
 	SiteYcombinator SiteName = "ycombinator" // Hacker News
 	SiteYoutube     SiteName = "youtube"
 )
@@ -20,6 +21,7 @@ func AllSites() []SiteName {
 		SiteDisqus,
 		SiteReddit,
 		SiteVbulletin,
+		SiteWordPress,
 		SiteYcombinator,
 		SiteYoutube,
 	}

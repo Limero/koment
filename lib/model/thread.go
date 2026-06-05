@@ -23,9 +23,10 @@ func PostsToThreads(posts Posts) Threads {
 			if thread != nil {
 				threads = append(threads, *thread)
 			}
-			thread = &Thread{
-				Posts: Posts{},
-			}
+			thread = &Thread{}
+		}
+		if thread == nil {
+			thread = &Thread{}
 		}
 		thread.Posts = append(thread.Posts, posts[i])
 	}

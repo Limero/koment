@@ -54,6 +54,14 @@ func TestFindComments(t *testing.T) {
 				ID:       "W0-ql0PiA-U",
 			},
 		},
+		{
+			name: "liliputing",
+			url:  "https://liliputing.com/dell-xps-14-laptop-is-now-available-with-ubuntu-linux/",
+			expected: &model.SiteInput{
+				SiteName: model.SiteWordPress,
+				FullUrl:  mustURL("https://liliputing.com/dell-xps-14-laptop-is-now-available-with-ubuntu-linux/"),
+			},
+		},
 	} {
 		t.Run(tt.name, func(t *testing.T) {
 			actual, err := FindComments(tt.url)
