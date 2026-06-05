@@ -14,10 +14,10 @@ func TestFetch(t *testing.T) {
 		t.Skip("Skipping external test; set TEST_EXTERNAL=true to run")
 	}
 
-	fullUrl, err := url.Parse("https://old.reddit.com/r/Music/comments/56cdgm/ama_im_really_rick_astley_i_swear_and_to/")
+	fullURL, err := url.Parse("https://old.reddit.com/r/Music/comments/56cdgm/ama_im_really_rick_astley_i_swear_and_to/")
 	require.NoError(t, err)
 
-	posts, err := getFromHTML(fullUrl)
+	posts, err := getFromHTML(fullURL)
 	require.NoError(t, err)
 	assert.NotEmpty(t, posts)
 

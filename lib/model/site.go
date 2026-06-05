@@ -45,9 +45,9 @@ type SiteInput struct {
 	SiteName     SiteName
 	ID           string
 	Category     string
-	FullUrl      *url.URL
+	FullURL      *url.URL
 	ContinueFrom *ContinueFrom
-	ApiKey       string
+	APIKey       string
 	OnPost       func(posts Posts)
 }
 

@@ -32,22 +32,22 @@ func (s Vbulletin) GetInput(url *url.URL, _ ...string) (*model.SiteInput, error)
 			return nil, err
 		}
 
-		var foundUrl string
+		var foundURL string
 		doc.Find("a[href]").Each(func(_ int, s *goquery.Selection) {
 			href := s.AttrOr("href", "")
 			if strings.Contains(href, "/node/") {
-				foundUrl = href
+				foundURL = href
 				return
 			}
 		})
-		if foundUrl != "" {
-			u, err := url.Parse(foundUrl)
+		if foundURL != "" {
+			u, err := url.Parse(foundURL)
 			if err != nil {
 				return nil, err
 			}
 			return &model.SiteInput{
 				SiteName: model.SiteVbulletin,
-				FullUrl:  u,
+				FullURL:  u,
 			}, nil
 		}
 
@@ -56,15 +56,15 @@ func (s Vbulletin) GetInput(url *url.URL, _ ...string) (*model.SiteInput, error)
 
 	return &model.SiteInput{
 		SiteName: model.SiteVbulletin,
-		FullUrl:  url,
+		FullURL:  url,
 	}, nil
 }
 
 func (s Vbulletin) Fetch(fi model.SiteInput) (model.Posts, error) {
-	return s.getFromHttp(fi.FullUrl)
+	return s.getFromHTTP(fi.FullURL)
 }
 
-func (s Vbulletin) getFromHttp(url *url.URL) (model.Posts, error) {
+func (s Vbulletin) getFromHTTP(url *url.URL) (model.Posts, error) {
 	res, err := http.Get(url.String())
 	if err != nil {
 		return model.Posts{}, err
@@ -84,8 +84,8 @@ func (s Vbulletin) getFromHttp(url *url.URL) (model.Posts, error) {
 		upvotes, _ := strconv.Atoi(s.Find(".votecount").Text())
 
 		replyTo := s.Find("a[title='View Post']").AttrOr("href", "")
-		replyToUrl, _ := url.Parse(replyTo)
-		replyTo = replyToUrl.Query().Get("p")
+		replyToURL, _ := url.Parse(replyTo)
+		replyTo = replyToURL.Query().Get("p")
 
 		// remove any quoted messages
 		s.Find(".bbcode_container").Remove()

@@ -44,8 +44,8 @@ func parseComment(s *goquery.Selection) model.Post {
 	body := ""
 	mdSel := s.Find(".usertext-body .md").First()
 	if mdSel.Length() > 0 {
-		bodyHtml, _ := mdSel.Html()
-		body = util.CleanHTML(bodyHtml)
+		bodyHTML, _ := mdSel.Html()
+		body = util.CleanHTML(bodyHTML)
 	}
 	if body == "" {
 		body = strings.TrimSpace(s.Find(".usertext-body").First().Text())

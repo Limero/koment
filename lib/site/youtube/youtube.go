@@ -37,10 +37,10 @@ func (s Youtube) GetInput(url *url.URL, _ ...string) (*model.SiteInput, error) {
 }
 
 func (s Youtube) Fetch(fi model.SiteInput) (model.Posts, error) {
-	return s.getFromApi(fi.ID, fi.ContinueFrom)
+	return s.getFromAPI(fi.ID, fi.ContinueFrom)
 }
 
-func (s Youtube) getFromApi(videoID string, continueFrom *model.ContinueFrom) (model.Posts, error) {
+func (s Youtube) getFromAPI(videoID string, continueFrom *model.ContinueFrom) (model.Posts, error) {
 	continueFromKey := ""
 	depth := 0
 	if continueFrom != nil {

@@ -16,7 +16,7 @@ func TestFetch(t *testing.T) {
 
 	site := NewWordPress()
 	input := &model.SiteInput{
-		FullUrl: mustURL("https://liliputing.com/dell-xps-14-laptop-is-now-available-with-ubuntu-linux/"),
+		FullURL: mustURL("https://liliputing.com/dell-xps-14-laptop-is-now-available-with-ubuntu-linux/"),
 	}
 
 	posts, err := site.Fetch(*input)

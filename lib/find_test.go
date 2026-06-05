@@ -43,7 +43,7 @@ func TestFindComments(t *testing.T) {
 				SiteName: model.SiteReddit,
 				Category: "subreddit",
 				ID:       "12dx0b0",
-				FullUrl:  mustURL("https://old.reddit.com/r/subreddit/comments/12dx0b0/abc/"),
+				FullURL:  mustURL("https://old.reddit.com/r/subreddit/comments/12dx0b0/abc/"),
 			},
 		},
 		{
@@ -59,7 +59,7 @@ func TestFindComments(t *testing.T) {
 			url:  "https://liliputing.com/dell-xps-14-laptop-is-now-available-with-ubuntu-linux/",
 			expected: &model.SiteInput{
 				SiteName: model.SiteWordPress,
-				FullUrl:  mustURL("https://liliputing.com/dell-xps-14-laptop-is-now-available-with-ubuntu-linux/"),
+				FullURL:  mustURL("https://liliputing.com/dell-xps-14-laptop-is-now-available-with-ubuntu-linux/"),
 			},
 		},
 	} {

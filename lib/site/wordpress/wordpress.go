@@ -19,12 +19,12 @@ func NewWordPress() Wordpress {
 func (s Wordpress) GetInput(u *url.URL, _ ...string) (*model.SiteInput, error) {
 	return &model.SiteInput{
 		SiteName: model.SiteWordPress,
-		FullUrl:  u,
+		FullURL:  u,
 	}, nil
 }
 
 func (s Wordpress) Fetch(fi model.SiteInput) (model.Posts, error) {
-	html, err := util.GetPageBodyString(fi.FullUrl.String())
+	html, err := util.GetPageBodyString(fi.FullURL.String())
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch page: %w", err)
 	}

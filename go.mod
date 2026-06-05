@@ -3,7 +3,7 @@ module github.com/limero/koment
 go 1.25.0
 
 require (
-	github.com/PuerkitoBio/goquery v1.11.0
+	github.com/PuerkitoBio/goquery v1.12.0
 	github.com/gdamore/tcell/v3 v3.4.0
 	github.com/google/uuid v1.6.0
 	github.com/jaswdr/faker v1.19.1
@@ -20,7 +20,7 @@ require (
 	github.com/lucasb-eyer/go-colorful v1.4.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
-	golang.org/x/net v0.47.0 // indirect
+	golang.org/x/net v0.52.0 // indirect
 	golang.org/x/sys v0.44.0 // indirect
 	golang.org/x/term v0.43.0 // indirect
 	golang.org/x/text v0.37.0 // indirect

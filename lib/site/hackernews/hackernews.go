@@ -24,10 +24,10 @@ func (s HackerNews) GetInput(url *url.URL, _ ...string) (*model.SiteInput, error
 }
 
 func (s HackerNews) Fetch(fi model.SiteInput) (model.Posts, error) {
-	return s.getFromApi(fi)
+	return s.getFromAPI(fi)
 }
 
-func (s HackerNews) getFromApi(fi model.SiteInput) (model.Posts, error) {
+func (s HackerNews) getFromAPI(fi model.SiteInput) (model.Posts, error) {
 	id := fi.ID
 	depth := 0
 	if fi.ContinueFrom != nil {
