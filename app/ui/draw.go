@@ -253,6 +253,16 @@ func (ui *ui) DrawInfo(infoLevel info.InfoLevel, msg string) {
 }
 
 func (ui *ui) Refresh() {
+	if ui.stopped.Load() {
+		return
+	}
+
+	ui.finiMu.Lock()
+	defer ui.finiMu.Unlock()
+	if ui.stopped.Load() {
+		return
+	}
+
 	select {
 	case ui.screen.EventQ() <- tcell.NewEventInterrupt(nil):
 	default:

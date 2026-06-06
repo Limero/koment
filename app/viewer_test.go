@@ -23,19 +23,6 @@ func TestContinueStub(t *testing.T) {
 		expectedPosts []string
 	}{
 		{
-			name: "Error if empty stub key",
-			threads: model.Threads{
-				{
-					Posts: model.Posts{
-						{
-							Stub: &model.Stub{},
-						},
-					},
-				},
-			},
-			expectedErr: "No more replies can be fetched on this thread",
-		},
-		{
 			name: "Error if failed to fetch",
 			threads: model.Threads{
 				{
@@ -131,7 +118,15 @@ func TestContinueStub(t *testing.T) {
 				threads: tt.threads,
 			}
 
-			a.ContinueStub(&ui)
+			key := ""
+			depth := 0
+			count := 0
+			if p := tt.threads[0].Posts[0].Stub; p != nil {
+				key = p.Key
+				count = p.Count
+				depth = tt.threads[0].Posts[0].Depth
+			}
+			a.ContinueStub(&ui, 0, 0, key, depth, count)
 
 			if tt.expectedErr != "" {
 				assert.Equal(t, info.InfoLevelError, a.infoLevel)

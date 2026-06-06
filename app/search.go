@@ -9,6 +9,7 @@ type Search struct {
 }
 
 func (a *App) SearchStart(term string) {
+	a.mu.Lock()
 	a.search = Search{
 		Term:    term,
 		Results: a.threads.FindPostsContaining(term),
@@ -17,10 +18,13 @@ func (a *App) SearchStart(term string) {
 	if len(a.search.Results) > 0 {
 		a.activeThread, a.activePost = a.threads.FindPost(a.search.Results[a.search.Index].ID)
 	}
+	a.mu.Unlock()
 	a.Info("Found %d result(s)", len(a.search.Results))
 }
 
 func (a *App) SearchNext() {
+	a.mu.Lock()
+	defer a.mu.Unlock()
 	if len(a.search.Results) == 0 {
 		return
 	}
@@ -31,6 +35,8 @@ func (a *App) SearchNext() {
 }
 
 func (a *App) SearchPrev() {
+	a.mu.Lock()
+	defer a.mu.Unlock()
 	if len(a.search.Results) == 0 {
 		return
 	}

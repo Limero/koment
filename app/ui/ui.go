@@ -2,6 +2,8 @@ package ui
 
 import (
 	"fmt"
+	"sync"
+	"sync/atomic"
 
 	"github.com/gdamore/tcell/v3"
 	"github.com/limero/koment/app/info"
@@ -26,6 +28,8 @@ type ui struct {
 	screen tcell.Screen
 	style  Style
 
+	stopped      atomic.Bool
+	finiMu       sync.Mutex
 	shouldCenter bool
 	scrollY      int
 
@@ -51,6 +55,9 @@ func New(style Style) (*ui, error) {
 	}, nil
 }
 
-func (ui ui) Fini() {
+func (ui *ui) Fini() {
+	ui.finiMu.Lock()
+	defer ui.finiMu.Unlock()
+	ui.stopped.Store(true)
 	ui.screen.Fini()
 }
