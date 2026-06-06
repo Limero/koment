@@ -55,6 +55,14 @@ func TestFindComments(t *testing.T) {
 			},
 		},
 		{
+			name: "lobsters",
+			url:  "https://lobste.rs/s/eetcxi/smallest_c_binary",
+			expected: &model.SiteInput{
+				SiteName: model.SiteLobsters,
+				ID:       "eetcxi",
+			},
+		},
+		{
 			name: "liliputing",
 			url:  "https://liliputing.com/dell-xps-14-laptop-is-now-available-with-ubuntu-linux/",
 			expected: &model.SiteInput{

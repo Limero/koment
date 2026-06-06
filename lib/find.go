@@ -7,10 +7,11 @@ import (
 
 	"github.com/limero/koment/lib/model"
 	"github.com/limero/koment/lib/site/disqus"
+	"github.com/limero/koment/lib/site/hackernews"
+	"github.com/limero/koment/lib/site/lobsters"
 	"github.com/limero/koment/lib/site/reddit"
 	"github.com/limero/koment/lib/site/vbulletin"
 	"github.com/limero/koment/lib/site/wordpress"
-	"github.com/limero/koment/lib/site/hackernews"
 	"github.com/limero/koment/lib/site/youtube"
 )
 
@@ -42,6 +43,9 @@ func FindComments(urlString string) (*model.SiteInput, error) {
 		return site.GetInput(parsedURL)
 	case "youtube.com":
 		site := youtube.NewYoutube()
+		return site.GetInput(parsedURL)
+	case "lobste.rs":
+		site := lobsters.NewLobsters()
 		return site.GetInput(parsedURL)
 	case "liliputing.com":
 		site := wordpress.NewWordPress()

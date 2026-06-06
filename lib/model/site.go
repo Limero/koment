@@ -13,6 +13,7 @@ const (
 	SiteWordPress  SiteName = "wordpress"
 	SiteHackerNews SiteName = "hackernews"
 	SiteYoutube    SiteName = "youtube"
+	SiteLobsters   SiteName = "lobsters"
 )
 
 func AllSites() []SiteName {
@@ -24,6 +25,7 @@ func AllSites() []SiteName {
 		SiteWordPress,
 		SiteHackerNews,
 		SiteYoutube,
+		SiteLobsters,
 	}
 }
 

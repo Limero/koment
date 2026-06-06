@@ -4,10 +4,11 @@ import (
 	"github.com/limero/koment/lib/model"
 	"github.com/limero/koment/lib/site/demo"
 	"github.com/limero/koment/lib/site/disqus"
+	"github.com/limero/koment/lib/site/hackernews"
+	"github.com/limero/koment/lib/site/lobsters"
 	"github.com/limero/koment/lib/site/reddit"
 	"github.com/limero/koment/lib/site/vbulletin"
 	"github.com/limero/koment/lib/site/wordpress"
-	"github.com/limero/koment/lib/site/hackernews"
 	"github.com/limero/koment/lib/site/youtube"
 )
 
@@ -27,6 +28,8 @@ func NewSite(siteName model.SiteName) model.Site {
 		return hackernews.NewHackerNews()
 	case model.SiteYoutube:
 		return youtube.NewYoutube()
+	case model.SiteLobsters:
+		return lobsters.NewLobsters()
 	}
 
 	return nil
