@@ -6,7 +6,6 @@ require (
 	github.com/PuerkitoBio/goquery v1.12.0
 	github.com/gdamore/tcell/v3 v3.4.0
 	github.com/google/uuid v1.6.0
-	github.com/jaswdr/faker v1.19.1
 	github.com/stretchr/testify v1.11.1
 )
 
