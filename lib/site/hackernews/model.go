@@ -25,8 +25,8 @@ type Post struct {
 	URL         string `json:"url"`
 }
 
-func (from Post) toModelBatch(depth int) model.Posts {
-	post, _ := from.toModel(depth)
+func (from Post) toModelBatch(depth int, opName ...string) model.Posts {
+	post, _ := from.toModel(depth, opName...)
 	posts := model.Posts{post}
 	for _, kid := range from.Kids {
 		posts = append(posts, model.Post{
@@ -41,10 +41,12 @@ func (from Post) toModelBatch(depth int) model.Posts {
 	return posts
 }
 
-func (from Post) toModel(depth int) (model.Post, error) {
+func (from Post) toModel(depth int, opName ...string) (model.Post, error) {
 	createdAt := time.Unix(from.Time, 0)
 
 	message := util.CleanHTML(from.Text)
+
+	isOP := len(opName) > 0 && opName[0] == from.By
 
 	return model.Post{
 		ID:    strconv.Itoa(from.ID),
@@ -53,16 +55,17 @@ func (from Post) toModel(depth int) (model.Post, error) {
 			Name: from.By,
 		},
 		Message: message,
+		IsOP:    isOP,
 
 		Upvotes:   &from.Score,
 		CreatedAt: &createdAt,
 	}, nil
 }
 
-func (from Posts) toModel(depth int) (model.Posts, error) {
+func (from Posts) toModel(depth int, opName ...string) (model.Posts, error) {
 	posts := make(model.Posts, 0)
 	for _, p := range from {
-		post, err := p.toModel(depth)
+		post, err := p.toModel(depth, opName...)
 		if err != nil {
 			return nil, err
 		}

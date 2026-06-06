@@ -77,6 +77,7 @@ func (s Vbulletin) getFromHTTP(url *url.URL) (model.Posts, error) {
 	}
 
 	posts := make(model.Posts, 0)
+	firstAuthor := ""
 	doc.Find(".b-post").Each(func(_ int, s *goquery.Selection) {
 		createdAtInt, _ := strconv.ParseInt(s.AttrOr("data-node-publishdate", ""), 10, 64)
 		createdAt := time.Unix(createdAtInt, 0)
@@ -91,13 +92,19 @@ func (s Vbulletin) getFromHTTP(url *url.URL) (model.Posts, error) {
 		s.Find(".bbcode_container").Remove()
 		s.Find(".b-bbcode").Remove()
 
+		author := s.Find(".author a").Text()
+		if firstAuthor == "" {
+			firstAuthor = author
+		}
+
 		newPost := model.Post{
 			ID:    s.AttrOr("data-node-id", ""),
 			Depth: 0,
 			Author: model.Author{
-				Name: s.Find(".author a").Text(),
+				Name: author,
 			},
 			Message: util.CleanHTML(s.Find(".js-post__content-text").Text()),
+			IsOP:    author == firstAuthor,
 
 			Upvotes:   &upvotes,
 			CreatedAt: &createdAt,

@@ -39,7 +39,7 @@ func (s Disqus) Fetch(fi model.SiteInput) (model.Posts, error) {
 	if err != nil {
 		return nil, err
 	}
-	return embed.toModel()
+	return embed.toModel(embed.Response.Thread.Author)
 }
 
 func (s Disqus) fetchEmbedPage(name string, number string) (EmbedPage, error) {

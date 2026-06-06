@@ -56,6 +56,7 @@ func (from Comment) toModel(depth int) (model.Post, error) {
 			Name: from.Author,
 		},
 		Message: from.Content,
+		IsOP:    from.AuthorIsChannelOwner,
 
 		Upvotes:   &from.LikeCount,
 		Downvotes: nil, // Dislike count is not public

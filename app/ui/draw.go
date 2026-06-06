@@ -168,6 +168,16 @@ func (ui *ui) drawAuthorLine(post model.Post, activePostID string, x int, y int)
 		ui.setContent(x, y, c, nil, tcell.StyleDefault.Foreground(authorColor))
 		x++
 	}
+	if post.IsOP {
+		x++
+		ui.setContent(x, y, '[', nil, ui.style.OPBadge)
+		x++
+		ui.setContent(x, y, 'O', nil, ui.style.OPBadge)
+		x++
+		ui.setContent(x, y, 'P', nil, ui.style.OPBadge)
+		x++
+		ui.setContent(x, y, ']', nil, ui.style.OPBadge)
+	}
 	if post.Upvotes != nil || post.Downvotes != nil {
 		x++
 		ui.setContent(x, y, ui.style.SeparatorChar, nil, ui.style.Separator)

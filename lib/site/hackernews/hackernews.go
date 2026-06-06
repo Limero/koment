@@ -50,7 +50,7 @@ func (s HackerNews) getFromAPI(fi model.SiteInput) (model.Posts, error) {
 				return nil, err
 			}
 
-			batch := newResp.toModelBatch(depth)
+			batch := newResp.toModelBatch(depth, resp.By)
 			posts = append(posts, batch...)
 
 			if fi.OnPost != nil {

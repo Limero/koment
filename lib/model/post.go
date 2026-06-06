@@ -16,6 +16,7 @@ type Post struct {
 	Author  Author
 	Message string
 	Hidden  bool
+	IsOP    bool
 
 	Upvotes   *int
 	Downvotes *int

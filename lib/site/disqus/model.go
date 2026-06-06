@@ -121,11 +121,12 @@ type EmbedPage struct {
 	Order string `json:"order"`
 }
 
-func (from Post) toModel() (model.Post, error) {
+func (from Post) toModel(opName ...string) (model.Post, error) {
 	createdAt, err := time.Parse("2006-01-02T15:04:05", from.CreatedAt)
 	if err != nil {
 		return model.Post{}, err
 	}
+	isOP := len(opName) > 0 && opName[0] == from.Author.Name
 	return model.Post{
 		ID:    from.ID,
 		Depth: from.Depth,
@@ -133,6 +134,7 @@ func (from Post) toModel() (model.Post, error) {
 			Name: from.Author.Name,
 		},
 		Message: util.CleanHTML(from.RawMessage),
+		IsOP:    isOP,
 
 		Upvotes:   &from.Likes,
 		Downvotes: &from.Dislikes,
@@ -140,11 +142,11 @@ func (from Post) toModel() (model.Post, error) {
 	}, nil
 }
 
-func (from EmbedPage) toModel() (model.Posts, error) {
+func (from EmbedPage) toModel(opName ...string) (model.Posts, error) {
 	var err error
 	posts := make(model.Posts, len(from.Response.Posts))
 	for i, p := range from.Response.Posts {
-		posts[i], err = p.toModel()
+		posts[i], err = p.toModel(opName...)
 		if err != nil {
 			return nil, err
 		}

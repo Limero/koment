@@ -20,6 +20,8 @@ type Style struct {
 	Time          tcell.Style
 	Separator     tcell.Style
 
+	OPBadge tcell.Style
+
 	// Characters
 	AuthorStartChar rune
 	UpVotesChar     rune
@@ -62,6 +64,8 @@ func DefaultStyle() Style {
 		DownVotesNum:  d.Foreground(color.Gray),
 		Time:          d.Foreground(color.Gray),
 		Separator:     d.Foreground(color.Gray),
+
+		OPBadge: d.Foreground(color.Yellow),
 
 		AuthorStartChar: '▎',
 		UpVotesChar:     tcell.RuneUArrow,

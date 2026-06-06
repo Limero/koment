@@ -11,8 +11,9 @@ import (
 )
 
 func parseComments(doc *goquery.Document) (model.Posts, error) {
-	var posts model.Posts
+	opName := doc.Find("div.thing.link").First().AttrOr("data-author", "")
 
+	var posts model.Posts
 	doc.Find("div.thing.comment").Each(func(_ int, s *goquery.Selection) {
 		if s.AttrOr("data-fullname", "") == "" {
 			return
@@ -20,13 +21,13 @@ func parseComments(doc *goquery.Document) (model.Posts, error) {
 		if s.AttrOr("data-author", "") == "" {
 			return
 		}
-		posts = append(posts, parseComment(s))
+		posts = append(posts, parseComment(s, opName))
 	})
 
 	return posts, nil
 }
 
-func parseComment(s *goquery.Selection) model.Post {
+func parseComment(s *goquery.Selection, opName string) model.Post {
 	id := s.AttrOr("data-fullname", "")
 	author := s.AttrOr("data-author", "")
 
@@ -58,6 +59,7 @@ func parseComment(s *goquery.Selection) model.Post {
 			Name: author,
 		},
 		Message:   body,
+		IsOP:      author == opName,
 		Upvotes:   &upvotes,
 		CreatedAt: &createdAt,
 	}

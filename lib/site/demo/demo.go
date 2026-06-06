@@ -28,6 +28,7 @@ func (s Demo) Fetch(_ model.SiteInput) (model.Posts, error) {
 			Depth:     0,
 			Author:    model.Author{Name: "Alice"},
 			Message:   "I think this approach has some serious flaws. Has anyone considered the performance implications of doing it this way?",
+			IsOP:      true,
 			CreatedAt: timePtr(now.Add(-2 * time.Hour)),
 		},
 		{

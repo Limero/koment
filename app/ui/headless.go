@@ -35,7 +35,11 @@ func (h HeadlessUI) Render(threads model.Threads) {
 				continue
 			}
 
-			fmt.Printf("%s\u2590 %s", indent, post.Author.Name)
+			opBadge := ""
+			if post.IsOP {
+				opBadge = " [OP]"
+			}
+			fmt.Printf("%s\u2590 %s%s", indent, post.Author.Name, opBadge)
 			if post.Upvotes != nil {
 				fmt.Printf(" \u2191%d", *post.Upvotes)
 			}
