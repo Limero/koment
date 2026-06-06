@@ -17,7 +17,7 @@ var httpClient = &http.Client{
 	},
 }
 
-func httpGet(url string) (*http.Response, error) {
+func HTTPGet(url string) (*http.Response, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -28,7 +28,7 @@ func httpGet(url string) (*http.Response, error) {
 }
 
 func GetPageToJSON[T any](url string, res T) error {
-	resp, err := httpGet(url)
+	resp, err := HTTPGet(url)
 	if err != nil {
 		return err
 	}
@@ -44,7 +44,10 @@ func GetPageToJSON[T any](url string, res T) error {
 	}
 
 	trimmed := bytes.TrimLeft(body, " \t\r\n")
-	if len(trimmed) > 0 && trimmed[0] == '<' {
+	if len(trimmed) == 0 {
+		return fmt.Errorf("empty response body (status %q)", resp.Status)
+	}
+	if trimmed[0] == '<' {
 		return fmt.Errorf("expected JSON but got HTML (status %q) - the API endpoint may be down or blocking requests", resp.Status)
 	}
 
@@ -55,7 +58,7 @@ func GetPageToJSON[T any](url string, res T) error {
 }
 
 func GetPageBodyString(url string) (string, error) {
-	resp, err := httpGet(url)
+	resp, err := HTTPGet(url)
 	if err != nil {
 		return "", err
 	}

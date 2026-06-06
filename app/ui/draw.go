@@ -60,33 +60,69 @@ func (ui *ui) DrawLoading(msg string) {
 	ui.screen.Show()
 }
 
-func (ui *ui) DrawViewer(threads model.Threads, activeThread, activePost int) {
-	x, y := 0, 0
-	activeMsgLength := 0
-	activeMsgY := 0
-	activePostID := threads[activeThread].Posts[activePost].ID
-
-	ui.screen.Clear()
+func (ui *ui) findActivePostY(threads model.Threads, activePostID string) (int, int) {
+	y := 0
 	for _, thread := range threads {
+		hiddenByParent := precomputeHiddenByParent(thread)
 		for pi := range thread.Posts {
 			post := &thread.Posts[pi]
-			x = post.Depth * ui.style.FullIndent
-
-			if post.Stub != nil {
-				ui.drawStub(*post, activePostID, x, y)
+			if pi < len(hiddenByParent) && hiddenByParent[pi] {
 				if post.ID == activePostID {
-					activeMsgY = y
-					activeMsgLength = 1
+					return y, 1
+				}
+				continue
+			}
+			if post.Stub != nil {
+				if post.ID == activePostID {
+					return y, 1
 				}
 				y++
 				continue
 			}
-
-			if hasHiddenParent(thread, pi) {
+			y++ // author line
+			if post.Hidden {
 				if post.ID == activePostID {
-					activeMsgY = y
-					activeMsgLength = 1
+					return y, 1
 				}
+				y++
+				continue
+			}
+			lines := util.TextToLines(post.Message, ui.style.MessageLength)
+			if post.ID == activePostID {
+				return y, len(lines)
+			}
+			y += len(lines)
+		}
+		y++
+	}
+	return 0, 0
+}
+
+func (ui *ui) DrawViewer(threads model.Threads, activeThread, activePost int) {
+	activePostID := threads[activeThread].Posts[activePost].ID
+
+	screenW, screenH := ui.screen.Size()
+	activeMsgY, activeMsgLength := ui.findActivePostY(threads, activePostID)
+	ui.scrollY = (activeMsgY + activeMsgLength/2) - screenH/2
+	if ui.scrollY < 0 {
+		ui.scrollY = 0
+	}
+
+	x, y := 0, 0
+	ui.screen.Clear()
+	for _, thread := range threads {
+		hiddenByParent := precomputeHiddenByParent(thread)
+		for pi := range thread.Posts {
+			post := &thread.Posts[pi]
+			x = post.Depth * ui.style.FullIndent
+
+			if pi < len(hiddenByParent) && hiddenByParent[pi] {
+				continue
+			}
+
+			if post.Stub != nil {
+				ui.drawStub(*post, activePostID, x, y)
+				y++
 				continue
 			}
 
@@ -96,18 +132,10 @@ func (ui *ui) DrawViewer(threads model.Threads, activeThread, activePost int) {
 
 			// Main message
 			if post.Hidden {
-				if post.ID == activePostID {
-					activeMsgY = y
-					activeMsgLength = 1
-				}
 				y++
 				continue
 			}
 			lines := util.TextToLines(post.Message, ui.style.MessageLength)
-			if post.ID == activePostID {
-				activeMsgLength = len(lines)
-				activeMsgY = y
-			}
 			for _, line := range lines {
 				x = (post.Depth * ui.style.FullIndent) + ui.style.SemiIndent
 				if post.ID == activePostID {
@@ -124,17 +152,6 @@ func (ui *ui) DrawViewer(threads model.Threads, activeThread, activePost int) {
 		}
 		y++
 	}
-
-	screenW, screenH := ui.screen.Size()
-	if ui.shouldCenter {
-		ui.shouldCenter = false
-		ui.scrollY = (activeMsgY + activeMsgLength/2) - screenH/2
-		if ui.scrollY < 0 {
-			ui.scrollY = 0
-		}
-		return
-	}
-	ui.shouldCenter = true
 
 	totalPosts := threads.TotalPosts()
 	if totalPosts > 0 {

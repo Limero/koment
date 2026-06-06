@@ -42,10 +42,7 @@ func (posts Posts) AppendAt(newPosts Posts, index int) Posts {
 }
 
 func (posts Posts) SortByDepth() {
-	sort.Slice(posts, func(i, j int) bool {
-		if posts[i].Depth == 0 || posts[j].Depth == 0 {
-			return false
-		}
+	sort.SliceStable(posts, func(i, j int) bool {
 		return posts[i].Depth < posts[j].Depth
 	})
 }

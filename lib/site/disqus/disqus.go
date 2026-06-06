@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"net/http"
 	"net/url"
 
 	"github.com/PuerkitoBio/goquery"
@@ -48,7 +47,7 @@ func (s Disqus) fetchEmbedPage(name string, number string) (EmbedPage, error) {
 	}
 	url := "https://disqus.com/embed/comments/?f=" + name + "&t_i=" + number
 
-	res, err := http.Get(url)
+	res, err := util.HTTPGet(url)
 	if err != nil {
 		return EmbedPage{}, err
 	}

@@ -21,7 +21,10 @@ func (s Reddit) GetInput(url *url.URL, _ ...string) (*model.SiteInput, error) {
 		return nil, fmt.Errorf("invalid path %q", url.Path)
 	}
 
-	fullURL, _ := url.Parse(fmt.Sprintf("https://old.reddit.com%s", url.Path))
+	fullURL, err := url.Parse(fmt.Sprintf("https://old.reddit.com%s", url.Path))
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse reddit URL: %w", err)
+	}
 
 	return &model.SiteInput{
 		SiteName: model.SiteReddit,

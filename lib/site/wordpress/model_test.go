@@ -65,9 +65,9 @@ func TestToModelMixedOrder(t *testing.T) {
 
 	posts := toModel(comments)
 	assert.Len(t, posts, 3)
-	assert.Equal(t, 0, posts[1].Depth, "parent should be depth 0")
-	assert.Equal(t, 1, posts[0].Depth, "nested reply should be depth 1")
-	assert.Equal(t, 1, posts[2].Depth, "direct reply should be depth 1")
+	assert.Equal(t, 0, posts[0].Depth, "parent should be depth 0")
+	assert.Equal(t, 1, posts[1].Depth, "direct reply should be depth 1")
+	assert.Equal(t, 1, posts[2].Depth, "nested reply should be depth 1")
 }
 
 func TestToModelEmpty(t *testing.T) {

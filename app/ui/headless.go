@@ -22,16 +22,17 @@ func (h HeadlessUI) Render(threads model.Threads) {
 		if ti > 0 {
 			fmt.Println()
 		}
+		hiddenByParent := precomputeHiddenByParent(thread)
 		for pi := range thread.Posts {
 			post := &thread.Posts[pi]
 			indent := strings.Repeat(" ", post.Depth*h.Style.FullIndent)
 
-			if post.Stub != nil {
-				fmt.Printf("%s\u2590 %d more replies\n", indent, post.Stub.Count)
+			if pi < len(hiddenByParent) && hiddenByParent[pi] {
 				continue
 			}
 
-			if hasHiddenParent(thread, pi) {
+			if post.Stub != nil {
+				fmt.Printf("%s\u2590 %d more replies\n", indent, post.Stub.Count)
 				continue
 			}
 

@@ -2,7 +2,6 @@ package vbulletin
 
 import (
 	"fmt"
-	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
@@ -19,9 +18,9 @@ func NewVbulletin() Vbulletin {
 	return Vbulletin{}
 }
 
-func (s Vbulletin) GetInput(url *url.URL, _ ...string) (*model.SiteInput, error) {
-	if !strings.Contains(url.Path, "/forum/") {
-		res, err := http.Get(url.String())
+func (s Vbulletin) GetInput(u *url.URL, _ ...string) (*model.SiteInput, error) {
+	if !strings.Contains(u.Path, "/forum/") {
+		res, err := util.HTTPGet(u.String())
 		if err != nil {
 			return nil, err
 		}
@@ -51,12 +50,12 @@ func (s Vbulletin) GetInput(url *url.URL, _ ...string) (*model.SiteInput, error)
 			}, nil
 		}
 
-		return nil, fmt.Errorf("could not find any comments for %q", url)
+		return nil, fmt.Errorf("could not find any comments for %q", u)
 	}
 
 	return &model.SiteInput{
 		SiteName: model.SiteVbulletin,
-		FullURL:  url,
+		FullURL:  u,
 	}, nil
 }
 
@@ -65,7 +64,7 @@ func (s Vbulletin) Fetch(fi model.SiteInput) (model.Posts, error) {
 }
 
 func (s Vbulletin) getFromHTTP(url *url.URL) (model.Posts, error) {
-	res, err := http.Get(url.String())
+	res, err := util.HTTPGet(url.String())
 	if err != nil {
 		return model.Posts{}, err
 	}
@@ -76,7 +75,13 @@ func (s Vbulletin) getFromHTTP(url *url.URL) (model.Posts, error) {
 		return model.Posts{}, err
 	}
 
-	posts := make(model.Posts, 0)
+	type rawPost struct {
+		post    model.Post
+		replyTo string
+	}
+
+	order := make([]string, 0)
+	allPosts := make(map[string]rawPost)
 	firstAuthor := ""
 	doc.Find(".b-post").Each(func(_ int, s *goquery.Selection) {
 		createdAtInt, _ := strconv.ParseInt(s.AttrOr("data-node-publishdate", ""), 10, 64)
@@ -97,31 +102,53 @@ func (s Vbulletin) getFromHTTP(url *url.URL) (model.Posts, error) {
 			firstAuthor = author
 		}
 
-		newPost := model.Post{
-			ID:    s.AttrOr("data-node-id", ""),
-			Depth: 0,
-			Author: model.Author{
-				Name: author,
+		id := s.AttrOr("data-node-id", "")
+		order = append(order, id)
+		allPosts[id] = rawPost{
+			post: model.Post{
+				ID:    id,
+				Depth: 0,
+				Author: model.Author{
+					Name: author,
+				},
+				Message: util.CleanHTML(s.Find(".js-post__content-text").Text()),
+				IsOP:    author == firstAuthor,
+
+				Upvotes:   &upvotes,
+				CreatedAt: &createdAt,
 			},
-			Message: util.CleanHTML(s.Find(".js-post__content-text").Text()),
-			IsOP:    author == firstAuthor,
-
-			Upvotes:   &upvotes,
-			CreatedAt: &createdAt,
-		}
-
-		if replyTo != "" {
-			for i, p := range posts {
-				if p.ID == replyTo {
-					newPost.Depth = p.Depth + 1
-					posts = posts.AppendAt(model.Posts{newPost}, i)
-				}
-			}
-		} else {
-			posts = append(posts, newPost)
+			replyTo: replyTo,
 		}
 	})
 
-	posts.SortByDepth()
+	children := make(map[string][]string)
+	roots := make([]string, 0)
+	for _, id := range order {
+		rp := allPosts[id]
+		if rp.replyTo != "" {
+			if _, ok := allPosts[rp.replyTo]; ok {
+				children[rp.replyTo] = append(children[rp.replyTo], id)
+			} else {
+				roots = append(roots, id)
+			}
+		} else {
+			roots = append(roots, id)
+		}
+	}
+
+	posts := make(model.Posts, 0, len(allPosts))
+	var dfs func(id string, depth int)
+	dfs = func(id string, depth int) {
+		rp := allPosts[id]
+		rp.post.Depth = depth
+		posts = append(posts, rp.post)
+		for _, cid := range children[id] {
+			dfs(cid, depth+1)
+		}
+	}
+	for _, rootID := range roots {
+		dfs(rootID, 0)
+	}
+
 	return posts, nil
 }

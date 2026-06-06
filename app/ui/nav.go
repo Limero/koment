@@ -109,13 +109,28 @@ func (ui *ui) PauseUntilInput() {
 	}
 }
 
-func (ui *ui) countPostLines(thread model.Thread, p int) int {
+func precomputeHiddenByParent(thread model.Thread) []bool {
+	result := make([]bool, len(thread.Posts))
+	hiddenDepth := -1
+	for i, post := range thread.Posts {
+		if hiddenDepth != -1 && post.Depth <= hiddenDepth {
+			hiddenDepth = -1
+		}
+		result[i] = hiddenDepth != -1
+		if post.Hidden && (hiddenDepth == -1 || post.Depth < hiddenDepth) {
+			hiddenDepth = post.Depth
+		}
+	}
+	return result
+}
+
+func (ui *ui) countPostLines(thread model.Thread, p int, hiddenByParent []bool) int {
 	post := thread.Posts[p]
+	if hiddenByParent != nil && len(hiddenByParent) > p && hiddenByParent[p] {
+		return 0
+	}
 	if post.Stub != nil {
 		return 1
-	}
-	if hasHiddenParent(thread, p) {
-		return 0
 	}
 	if post.Hidden {
 		return 1
@@ -127,6 +142,7 @@ func (ui *ui) navDownHalfPage(threads model.Threads, t, p int) (int, int) {
 	_, screenH := ui.screen.Size()
 	targetLines := max(1, screenH/2)
 	lines := 0
+	hiddenByParent := precomputeHiddenByParent(threads[t])
 
 	for lines < targetLines {
 		if p+1 < len(threads[t].Posts) {
@@ -135,10 +151,11 @@ func (ui *ui) navDownHalfPage(threads model.Threads, t, p int) (int, int) {
 			t++
 			p = 0
 			lines++ // blank line between threads
+			hiddenByParent = precomputeHiddenByParent(threads[t])
 		} else {
 			break
 		}
-		lines += ui.countPostLines(threads[t], p)
+		lines += ui.countPostLines(threads[t], p, hiddenByParent)
 	}
 
 	return t, p
@@ -148,6 +165,7 @@ func (ui *ui) navUpHalfPage(threads model.Threads, t, p int) (int, int) {
 	_, screenH := ui.screen.Size()
 	targetLines := max(1, screenH/2)
 	lines := 0
+	hiddenByParent := precomputeHiddenByParent(threads[t])
 
 	for lines < targetLines {
 		if p > 0 {
@@ -156,10 +174,11 @@ func (ui *ui) navUpHalfPage(threads model.Threads, t, p int) (int, int) {
 			t--
 			p = len(threads[t].Posts) - 1
 			lines++ // blank line between threads
+			hiddenByParent = precomputeHiddenByParent(threads[t])
 		} else {
 			break
 		}
-		lines += ui.countPostLines(threads[t], p)
+		lines += ui.countPostLines(threads[t], p, hiddenByParent)
 	}
 
 	return t, p

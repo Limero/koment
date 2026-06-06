@@ -50,7 +50,6 @@ func (a *App) ViewerMode(ui ui.UI) {
 			key := post.Stub.Key
 			count := post.Stub.Count
 			depth := post.Depth
-			post.Stub.Key = ""
 			a.mu.Unlock()
 			go func(k string, d, c int) {
 				a.ContinueStub(ui, at, ap, k, d, c)
@@ -81,6 +80,10 @@ func (a *App) ContinueStub(ui ui.UI, threadIdx, postIdx int, key string, depth, 
 	if threadIdx >= len(a.threads) || postIdx >= len(a.threads[threadIdx].Posts) {
 		a.mu.Unlock()
 		return
+	}
+	p := &a.threads[threadIdx].Posts[postIdx]
+	if p.Stub != nil {
+		p.Stub.Key = ""
 	}
 	fi := a.SiteInput
 	fi.ContinueFrom = &model.ContinueFrom{
@@ -114,18 +117,17 @@ func (a *App) ContinueStub(ui ui.UI, threadIdx, postIdx int, key string, depth, 
 		RemoveAt(postIdx).
 		AppendAt(posts, postIdx)
 
-	if len(posts) < count {
+	if len(posts) < count && len(posts) > 0 {
 		activeThread.Posts = append(activeThread.Posts, model.Post{
 			ID:    uuid.NewString(),
 			Depth: depth,
 			Stub: &model.Stub{
 				Count: count - len(posts),
-				Key:   "", // TODO
+				Key:   key,
 			},
 		})
 	}
 	a.mu.Unlock()
 
 	ui.Refresh()
-	ui.Refresh() // TODO: Shouldn't need to call this twice
 }

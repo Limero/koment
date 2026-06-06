@@ -82,7 +82,7 @@ func (a *App) RunApp(ui ui.UI) error {
 
 	for a.run {
 		a.mu.Lock()
-		if len(a.threads) > 0 {
+		if len(a.threads) > 0 && a.mode != ModeSearch {
 			ui.DrawViewer(a.threads, a.activeThread, a.activePost)
 		} else if a.loadingMsg != "" {
 			ui.DrawLoading(a.loadingMsg)

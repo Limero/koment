@@ -28,10 +28,9 @@ type ui struct {
 	screen tcell.Screen
 	style  Style
 
-	stopped      atomic.Bool
-	finiMu       sync.Mutex
-	shouldCenter bool
-	scrollY      int
+	stopped atomic.Bool
+	finiMu  sync.Mutex
+	scrollY int
 
 	authorColors map[string]tcell.Color
 }
