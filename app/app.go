@@ -21,7 +21,7 @@ type App struct {
 	activeThread     int
 	activePost       int
 	mode             Mode
-	command          string
+	searchInput      string
 	infoMsg          string
 	infoLevel        info.InfoLevel
 	run              bool
@@ -105,9 +105,9 @@ func (a *App) RunApp(ui ui.UI) error {
 		a.mu.Unlock()
 
 		switch a.mode {
-		case ModeCommand:
-			ui.DrawCommandPrompt(a.command)
-			a.CommandMode(ui)
+		case ModeSearch:
+			ui.DrawSearchPrompt(a.searchInput)
+			a.SearchMode(ui)
 		case ModeViewer:
 			a.ViewerMode(ui)
 		}

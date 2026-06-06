@@ -34,7 +34,7 @@ func (ui *MockUI) DrawLoading(msg string) {}
 
 func (ui *MockUI) DrawViewer(threads model.Threads, activeThread, activePost int) {}
 
-func (ui *MockUI) DrawCommandPrompt(command string) {}
+func (ui *MockUI) DrawSearchPrompt(search string) {}
 
 func (ui *MockUI) DrawInfo(infoLevel info.InfoLevel, msg string) {}
 
@@ -44,7 +44,7 @@ func (ui *MockUI) HandleViewerInput(threads model.Threads, t, p int) (string, in
 	return "", 0, 0
 }
 
-func (ui *MockUI) HandleCommandInput() (string, string) {
+func (ui *MockUI) HandleSearchInput() (string, string) {
 	return "", ""
 }
 func (ui *MockUI) PauseUntilInput() {}

@@ -14,13 +14,13 @@ type UI interface {
 	// Draw
 	DrawLoading(msg string)
 	DrawViewer(threads model.Threads, activeThread, activePost int)
-	DrawCommandPrompt(command string)
+	DrawSearchPrompt(search string)
 	DrawInfo(infoLevel info.InfoLevel, msg string)
 	Refresh()
 
 	// Nav
 	HandleViewerInput(threads model.Threads, t, p int) (string, int, int)
-	HandleCommandInput() (string, string)
+	HandleSearchInput() (string, string)
 	PauseUntilInput()
 }
 

@@ -216,16 +216,16 @@ func (ui *ui) drawStub(post model.Post, activePostID string, x int, y int) {
 	}
 }
 
-func (ui *ui) DrawCommandPrompt(command string) {
+func (ui *ui) DrawSearchPrompt(search string) {
 	width, height := ui.screen.Size()
 
 	x := 0
-	for _, c := range ":" + command {
-		ui.screen.SetContent(x, height-1, c, nil, ui.style.Command)
+	for _, c := range "/" + search {
+		ui.screen.SetContent(x, height-1, c, nil, ui.style.Search)
 		x++
 	}
 	for ; x <= width; x++ {
-		ui.screen.SetContent(x, height-1, ' ', nil, ui.style.Command)
+		ui.screen.SetContent(x, height-1, ' ', nil, ui.style.Search)
 	}
 
 	ui.screen.Show()

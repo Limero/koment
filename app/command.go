@@ -1,46 +1,28 @@
 package app
 
-import (
-	"strings"
+import "github.com/limero/koment/app/ui"
 
-	"github.com/limero/koment/app/ui"
-)
-
-func (a *App) SetCommandMode(cmd string) {
-	a.command = cmd
-	a.mode = ModeCommand
+func (a *App) SetSearchMode() {
+	a.searchInput = ""
+	a.mode = ModeSearch
 }
 
-func (a *App) CommandMode(ui ui.UI) {
-	action, char := ui.HandleCommandInput()
+func (a *App) SearchMode(ui ui.UI) {
+	action, char := ui.HandleSearchInput()
 	switch action {
-	case "command-add":
-		a.command += char
-	case "command-rm":
-		if len(a.command) > 0 {
-			a.command = a.command[:len(a.command)-1]
+	case "search-add":
+		a.searchInput += char
+	case "search-rm":
+		if len(a.searchInput) > 0 {
+			a.searchInput = a.searchInput[:len(a.searchInput)-1]
 		}
-	case "command-exec":
-		a.ExecCommand(a.command)
+	case "search-exec":
+		a.SetViewerMode()
+		a.SearchStart(a.searchInput)
 	case "exit":
+		a.searchInput = ""
 		a.SetViewerMode()
 	case "quit":
 		a.run = false
 	}
-}
-
-func (a *App) ExecCommand(cmd string) {
-	a.SetViewerMode()
-	if strings.HasPrefix(cmd, "search ") {
-		term, _ := strings.CutPrefix(cmd, "search ")
-		a.SearchStart(term)
-		return
-	}
-
-	if strings.ToLower(a.command) == "q" {
-		a.run = false
-		return
-	}
-
-	a.Error("Invalid command: %q", a.command)
 }

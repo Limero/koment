@@ -36,8 +36,8 @@ type Style struct {
 	ActiveMessageChar rune
 	StubStartChar     rune
 
-	// Command/Search
-	Command tcell.Style
+	// Search
+	Search tcell.Style
 
 	// Info message
 	LoadingMessage tcell.Style
@@ -76,7 +76,7 @@ func DefaultStyle() Style {
 		ActiveMessageChar: tcell.RuneVLine,
 		StubStartChar:     '▎',
 
-		Command: d,
+		Search: d,
 
 		LoadingMessage: d,
 		InfoMessage:    d,

@@ -30,10 +30,8 @@ func (a *App) ViewerMode(ui ui.UI) {
 	a.mu.Unlock()
 
 	switch action {
-	case "command":
-		a.SetCommandMode("")
 	case "search":
-		a.SetCommandMode("search ")
+		a.SetSearchMode()
 	case "search-next":
 		a.SearchNext()
 	case "search-prev":

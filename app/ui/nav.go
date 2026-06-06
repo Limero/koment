@@ -34,9 +34,7 @@ func (ui *ui) HandleViewerInput(threads model.Threads, t, p int) (string, int, i
 				return "search-next", t, p
 			case "N":
 				return "search-prev", t, p
-			case ":":
-				return "command", t, p
-			case "/":
+		case "/":
 				return "search", t, p
 			}
 		case tcell.KeyCtrlL:
@@ -77,18 +75,18 @@ func (ui *ui) HandleViewerInput(threads model.Threads, t, p int) (string, int, i
 	return "", t, p
 }
 
-func (ui *ui) HandleCommandInput() (string, string) {
+func (ui *ui) HandleSearchInput() (string, string) {
 	ev := <-ui.screen.EventQ()
 	switch ev := ev.(type) {
 	case *tcell.EventKey:
 		ui.Refresh()
 		switch ev.Key() {
 		case tcell.KeyRune:
-			return "command-add", ev.Str()
+			return "search-add", ev.Str()
 		case tcell.KeyBackspace:
-			return "command-rm", ""
+			return "search-rm", ""
 		case tcell.KeyEnter:
-			return "command-exec", ""
+			return "search-exec", ""
 		case tcell.KeyESC:
 			return "exit", ""
 		case tcell.KeyCtrlC:
